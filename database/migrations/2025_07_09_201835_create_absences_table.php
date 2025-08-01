@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+         Schema::create('absences', function (Blueprint $table) {
+            $table->bigIncrements('id'); // Adjusted to bigIncrements for larger INT
+            $table->string('name', 225);
+            $table->dateTime('absence_date');
+            $table->time('checkin_time')->nullable();
+            $table->time('checkout_time')->nullable();
+            $table->longText('description')->nullable();
+            $table->boolean('status')->default(true);
+            $table->timestamps(); // created_at and updated_at
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('absence');
+    }
+};

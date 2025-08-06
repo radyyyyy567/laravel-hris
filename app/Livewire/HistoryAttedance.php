@@ -43,14 +43,15 @@ class HistoryAttedance extends Component
 
         return (object) [
             'date' => Carbon::parse($date),
-            'name' => $schedule?->manpower?->user?->name ?? $absence?->manpower?->user?->name ?? '-',
+            'name' => $schedule?->manpower?->user?->name ?? $absence?->manpower?->user?->name ?? '--,--',
             'status' => $schedule?->status ?? 'OFF',
-            'checkin_time' => $absence?->checkin_time ?? '-',
-            'checkout_time' => $absence?->checkout_time ?? '-',
+            'checkin_time' => $absence?->checkin_time ?? '--,--',
+            'checkout_time' => $absence?->checkout_time ?? '--,--',
         ];
     });
 
-    return view('livewire.schedule', ['scheduleData' => $results]);
+    return view('livewire.schedule', ['scheduleData' => $results,
+'type' => "hai"]);
 }
 
 }

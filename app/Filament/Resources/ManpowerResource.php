@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use PhpParser\Node\Stmt\Label;
-
+use App\Models\Group;
 class ManpowerResource extends Resource
 {
 
@@ -24,6 +24,8 @@ class ManpowerResource extends Resource
 {
     return 'Man Power'; // 👈 replaces "Users" in breadcrumbs
 }
+
+protected static bool $shouldRegisterNavigation = false;
     protected static ?string $model = User::class;
     protected static ?string $recordTitleAttribute = 'Man power';
 
@@ -44,6 +46,12 @@ class ManpowerResource extends Resource
                 TextInput::make('name'),
                 TextInput::make('email'),
                 TextInput::make('nip')->label('NIP'),
+                Select::make('group_id')
+                    ->label('Pilih Jabatan')
+                    ->options(Group::pluck('name', 'id'))
+                    ->default(fn($record) => $record?->group?->user_id)
+                    ->searchable()
+                    ->required(),
                 TextInput::make('password')
                     ->password()
                     ->revealable(),
@@ -60,7 +68,8 @@ class ManpowerResource extends Resource
                 TextColumn::make('projects.name')
     ->label('Projects')
     ->badge()
-    ->separator(', ')
+    ->separator(', '),
+            TextColumn::make('group.group.name'),
             ])
             ->filters([
                 //

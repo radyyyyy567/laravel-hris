@@ -52,6 +52,7 @@ class ManpowerPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->navigation(false)
             ->authMiddleware([
                 Authenticate::class,
             ])->viteTheme('resources/css/filament/admin/theme.css');

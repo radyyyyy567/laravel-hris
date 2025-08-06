@@ -66,7 +66,7 @@ class User extends Authenticatable implements FilamentUser
 
 public function group()
     {
-        return $this->hasOne(Group::class);
+        return $this->hasOne(RelationGroupManpower::class);
     }
 
     public function schedule()
@@ -77,6 +77,11 @@ public function group()
     public function absence()
     {
         return $this->hasMany(RelationAbsenceManpower::class);
+    }
+
+      public function notif()
+    {
+        return $this->hasMany(RelationNotificationUser::class);
     }
 
 

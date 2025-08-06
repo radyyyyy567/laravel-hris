@@ -4,14 +4,15 @@ namespace App\Filament\Manpower\Pages;
 
 use Filament\Pages\Page;
 
-class Submission extends Page
+class Settings extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    public function getTitle(): string
+
+
+public function getTitle(): string
     {
         return '';
     }
-
-    protected static string $view = 'filament.manpower.pages.submission';
+    protected static string $view = 'filament.manpower.pages.settings';
 }

@@ -16,17 +16,20 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class GroupResource extends Resource
 {
     protected static ?string $model = Group::class;
-    protected static bool $shouldRegisterNavigation = false;
-protected static ?int $navigationSort = 2;
-    protected static ?string $navigationGroup = 'Settings';
 
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('description')
+                    ->required()
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -34,7 +37,16 @@ protected static ?int $navigationSort = 2;
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

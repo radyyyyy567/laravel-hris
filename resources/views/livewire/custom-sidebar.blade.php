@@ -147,10 +147,10 @@
                     ],
                     [
                         'name' => 'Rekap Absensi',
-                        'route' => 'filament.admin.resources.absences.index',
+                        'route' => 'filament.admin.resources.recap-absences.index',
                         'icon' => 'heroicon-o-briefcase',
                         'badge' => null,
-                        'activeOn' => ['filament.admin.resources.absences.*'],
+                        'activeOn' => ['filament.admin.resources.recap-absences.*'],
                     ],
                 ]
             ],
@@ -176,10 +176,10 @@
                     ],
                     [
                         'name' => 'Pengajuan Hold',
-                        'route' => 'filament.admin.resources.projects.index',
+                        'route' => 'filament.admin.resources.recap-absences.index',
                         'icon' => 'heroicon-o-briefcase',
                         'badge' => null,
-                        'activeOn' => ['filament.admin.resources.projects.*'],
+                        'activeOn' => ['filament.admin.resources.recap-absences.index'],
                     ],
                 ]
             ],
@@ -240,10 +240,38 @@
                 'items' => [
                     [
                         'name' => 'Data Pengguna',
-                        'route' => 'filament.admin.pages.dashboard',
+                        'route' => 'filament.admin.resources.users.index',
                         'icon' => 'heroicon-o-squares-2x2',
                         'badge' => null,
-                        'activeOn' => ['filament.admin.resource.users'],
+                        'activeOn' => ['filament.admin.resources.users'],
+                    ],
+                ]
+            ],
+             [
+                'label' => null, // No label for main group
+                'collapsible' => false,
+                'defaultOpen' => true,
+                'items' => [
+                    [
+                        'name' => 'Notifikasi',
+                        'route' => 'filament.admin.resources.notifications.index',
+                        'icon' => 'heroicon-o-bell',
+                        'badge' => null,
+                        'activeOn' => ['filament.admin.resources.notifications.*'],
+                    ],
+                ]
+            ],
+            [
+                'label' => null, // No label for main group
+                'collapsible' => false,
+                'defaultOpen' => true,
+                'items' => [
+                    [
+                        'name' => 'Data Group',
+                        'route' => 'filament.admin.resources.groups.index',
+                        'icon' => 'heroicon-o-squares-2x2',
+                        'badge' => null,
+                        'activeOn' => ['filament.admin.resources.groups.*'],
                     ],
                 ]
             ],

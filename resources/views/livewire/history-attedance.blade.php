@@ -1,7 +1,7 @@
-<div class="space-y-4 max-h-screen overflow-auto px-4 -mx-4">
-    @foreach($scheduleData as $schedule)
+<div class="space-y-4 max-h-screen overflow-auto px-4 -mx-4 pb-[100px]">
+    @foreach($scheduledwadwadData as $schedule)
         <div class="bg-[#F9F9F9] rounded-lg shadow p-4">
-            <div class="space-y-2">
+            <div class="space-y-2">dwadwawad
                 <div class="grid grid-cols-2">
                     <div class="space-y-2">
                         <div class="flex item-center space-x-4">
@@ -10,13 +10,13 @@
                                 <x-dynamic-component :component="'heroicon-o-calendar'"
                                     class="w-[16px] h-[16px] text-blue-600" />
                             </div>
-                            <p class="text-gray-900 text-[24px] font-semibold">{{ $schedule->date->format('d, M') }}</p>
+                            <p class="text-gray-900 text-[1px] font-semibold">{{ $schedule->date->format('d, M') }}</p>
                         </div>
                         <div>
-                            <p class="text-gray-900">Check In</p>
+                            <p class="text-gray-900">Chec</p>
+                        </div>
                             <p class="text-gray-900 font-bold text-[24px]">{{ $schedule->checkin_time }}</p>
                         </div>
-                    </div>
 
                     <div class="space-y-2">
                         <div class="flex item-center space-x-4">

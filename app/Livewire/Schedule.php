@@ -50,7 +50,9 @@ class Schedule extends Component
         // dd($results); // Debugging line, remove in production
         return view(
             'livewire.schedule',
-            ['scheduleData' => $results]
+            ['scheduleData' => $results,
+                    'type' => 'schedule'
+            ]
         );
     }
 }

@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class GroupManpower extends Model
+class RelationNotificationUser extends Model
 {
     protected $guarded = [];
     //
-    public function group()
+    public function notif()
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Notification::class);
     }
 
     public function user()

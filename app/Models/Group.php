@@ -11,6 +11,6 @@ class Group extends Model
 
     public function manpower()
     {
-        return $this->hasMany(GroupManpower::class);
+        return $this->hasMany(RelationGroupManpower::class);
     }
 }

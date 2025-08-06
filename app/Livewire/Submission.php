@@ -2,59 +2,112 @@
 
 namespace App\Livewire;
 
-use App\Models\OvertimeAssignment;
-use App\Models\Project;
-use Livewire\Component;
+use App\Models\Notification;
+use App\Models\RelationNotificationUser;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
+use App\Models\User;
+use App\Models\Project;
+use App\Models\ProjectOvertimeUser;
+use App\Models\OvertimeAssignment;
+use Illuminate\Support\Facades\Storage; 
+use Livewire\WithFileUploads;
 use Carbon\Carbon;
 
 class Submission extends Component
 {
-    public string $submission_name = '';
-    public string $submission_date = '';
-    public string $start_time = '';
-    public string $end_time = '';
-    public string $submission_type = '';
-    public string $evidence = ''; // adjust if file
-    public string $project_name = '';
-    public string $project_id = '';
-    
-    public function mount()
-    {
-        
-        $this->project_name = Auth::user()?->manpower->first();
-        $this->project_id =  $this->project_name?->project->id ?? '';
-    }
-    
+    use WithFileUploads;
+
+    public $submission_type;
+    public $submission_date;
+    public $project_id;
+    public $user_id;
+    public $start_time;
+    public $end_time;
+    public $evidence;
+
+    protected $rules = [
+        'submission_type' => 'required',
+        'submission_date' => 'required|date',
+        'project_id' => 'required|exists:projects,id',
+        'user_id' => 'required|exists:users,id',
+        'start_time' => 'nullable',
+        'end_time' => 'nullable',
+        'evidence' => 'nullable|file|max:10240',
+    ];
 
     public function store()
     {
-        $description = [
-            'submission_type' => $this->submission_type,
-            'evidence' => $this->evidence,
-        ];
+        $start = $this->submission_type === 'overtime'
+            ? Carbon::parse("{$this->submission_date} {$this->start_time}")
+            : Carbon::parse("{$this->start_time} 00:00:00");
 
-        $submission = new OvertimeAssignment();
-        $submission->name = $this->submission_name;
-        $submission->submission_date = $this->submission_date;
-        $submission->project_name = $this->project_name;
+        $end = $this->submission_type === 'overtime'
+            ? Carbon::parse("{$this->submission_date} {$this->end_time}")
+            : Carbon::parse("{$this->end_time} 00:00:00");
 
-        // Handle time vs date logic for type
-        if ($this->submission_type === 'overtime') {
-            $submission->hour = Carbon::parse($this->start_time)->diffInHours(Carbon::parse($this->end_time));
-        } else {
-            $submission->date = $this->submission_date;
-        }
+        $evidencePath = $this->evidence
+            ? $this->evidence->store('evidences', 'public')
+            : null;
 
-        $submission->description = json_encode($description);
-        $submission->save();
+        $submission = OvertimeAssignment::create([
+            'name' => $this->submission_type,
+            'submission_date' => $this->submission_date,
+            'start_time' => $start,
+            'end_time' => $end,
 
-        session()->flash('message', 'Submission saved successfully.');
+            'description' => json_encode([
+                'submission_type' => $this->submission_type,
+                'evidence' => $evidencePath
+            ]),
+            'status' => 'waiting', // you can customize if needed
+        ]);
+
+        
+
+        $user = User::with(['group.group', 'manpower.project.placement.placement'])->find(auth()->id());
+        
+        $notfication = Notification::create([
+            'title' => "Pengajuan {$this->submission_type}",
+            'description' => "Pengajuan Anda sedang di review Admin harap menunggu",
+            'type' => "submission"
+        ]);
+
+        RelationNotificationUser::create([
+            'user_id' => $user->id,
+            'notification_id' => $notfication->id
+        ]);
+
+        $porject_overtime_user = ProjectOvertimeUser::create([
+            'project_id' => $user->manpower->first()->project->id,
+            'user_id' => $user->id,
+            'overtime_assignment_id' => $submission->id,
+        ]);
+        dd($porject_overtime_user);
+
+        session()->flash('success', 'Data berhasil ditambahkan.');
+
+        $this->resetForm();
+    }
+
+    public function resetForm()
+    {
+        $this->reset([
+            'submission_type',
+            'submission_date',
+            'project_id',
+            'user_id',
+            'start_time',
+            'end_time',
+            'evidence',
+        ]);
     }
 
     public function render()
     {
-        dd($this->project_id); // Debugging line, remove in production
-        return view('livewire.submission');
+        return view('livewire.submission', [
+            'users' => User::all(),
+            'projects' => Project::all(),
+        ]);
     }
 }

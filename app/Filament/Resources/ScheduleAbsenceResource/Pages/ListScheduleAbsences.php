@@ -20,7 +20,7 @@ class ListScheduleAbsences extends ListRecords
 
     public function getTitle(): string
     {
-        return 'Jadwal Absensi';
+        return 'Jadwal Attendance';
     }
 
     protected function getHeaderActions(): array
@@ -70,7 +70,7 @@ class ListScheduleAbsences extends ListRecords
             ->requiresConfirmation(),
     ),
             CreateAction::make()
-    ->label('Tambah Man Power')
+    ->label('Tambah Jadwal Attendance')
     ->url(fn () => url('/admin/schedule-absences/create?project=' . Request::get('project')))
         ];
     }

@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Request;
 use PhpParser\Node\Stmt\Label;
 use App\Models\Group;
+use App\Models\Placement;
+use Filament\Forms\Get;
 
 
 class ManpowerResource extends Resource
@@ -52,7 +54,7 @@ class ManpowerResource extends Resource
     }
 
     public static function form(Form $form): Form
-    {
+    {   
         return $form
             ->schema([
                 TextInput::make('name'),
@@ -65,12 +67,38 @@ class ManpowerResource extends Resource
                     ->searchable()
                     ->required(),
 
-                Select::make('project')
-                    ->label('Proyek')
-                    ->options(Project::all()->pluck('name', 'id'))
-                    ->default(Request::get('project'))
-                    ->disabled()
-                    ->dehydrated(),
+Select::make('project_id')
+    ->label('Proyek')
+    ->options(Project::all()->pluck('name', 'id'))
+    ->default(Request::get('project'))
+    ->disabled()
+    ->dehydrated()
+    ->live(), // Add live() to update placement options when project changes
+
+Select::make('placement_id')
+    ->label('Placement')
+    ->options(function (Get $get) {
+        // Get the selected project ID
+        $projectId = $get('project_id');
+        
+        // If no project selected, return empty array
+        if (!$projectId) {
+            return [];
+        }
+        
+        // Get placements for the selected project through the pivot table
+        return Placement::whereHas('project', function($query) use ($projectId) {
+                $query->where('project_id', $projectId);
+            })
+            ->pluck('name', 'id')
+            ->toArray();
+    })
+    ->default(function () {
+        // Get default placement ID from request if available
+        return Request::get('placement_id');
+    })
+    ->disabled(fn (Get $get): bool => !$get('project_id')) // Disabled if no project selected
+    ->dehydrated(),
                 TextInput::make('password')
                     ->password()
                     ->revealable(),

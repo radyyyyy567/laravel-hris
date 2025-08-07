@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ManpowerResource\Pages;
 
 use App\Filament\Resources\ManpowerResource;
+use App\Models\RelationPlacementUser;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Request;
 
@@ -12,14 +13,16 @@ class CreateManpower extends CreateRecord
 
     protected int|string|null $projectId = null;
     protected int|string|null $groupId = null;
+    protected int|string|null $placementId = null;
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $this->groupId = $data['group_id'];
-        $this->projectId = $data['project'];
+        $this->projectId = $data['project_id'];
+        $this->placementId = $data['placement_id'];
+        $data['password'] = bcrypt($data['password']);
         unset($data['group_id']);
-        unset($data['project']);
-
+        unset($data['project_id']);
         return $data;
     }
 
@@ -34,6 +37,10 @@ class CreateManpower extends CreateRecord
             'project_id' => $this->projectId,
         ]);
 
+       RelationPlacementUser::create([
+    'user_id' => $this->record->id,
+    'placement_id' => $this->placementId,
+]);
         // Assign "man_power" role to the created user
         $this->record->assignRole('man_power');
     }

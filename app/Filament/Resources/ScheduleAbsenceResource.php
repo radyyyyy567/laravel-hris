@@ -30,7 +30,7 @@ class ScheduleAbsenceResource extends Resource
 
     public static function getBreadcrumb(): string
     {
-        return 'Jadwal Absensi';
+        return 'Jadwal Attendance';
     }
     public static function getEloquentQuery(): Builder
     {

@@ -16,11 +16,11 @@ class EditPlacement extends EditRecord
 
         $this->record->loadMissing(['user', 'project']);
 
-        // Even if null, assign to form so Select/MultiSelect binds correctly
+        
         $data['project_id'] = $this->record->project?->project_id;
 
-        $data['manpower_user_ids'] = $this->record->user->pluck('user_id')->toArray();
-// dd($data);
+        
+
         return $data;
     }
 
@@ -36,9 +36,8 @@ class EditPlacement extends EditRecord
             // Assuming ['lat' => ..., 'lng' => ...]
             $data['long_lat'] = $data['input_long_lat']['lat'] . ',' . $data['input_long_lat']['lng'];
         }
-
         
-
+unset($data['project_id']);
         unset($data['input_long_lat']);
         return $data;
     }

@@ -36,6 +36,39 @@
             class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg ring-1 ring-black/5 dark:bg-gray-900 dark:border-gray-700 dark:ring-white/10"
             style="display: none;">
             <div class="py-1 max-h-60 overflow-y-auto">
+                <!-- Add "All" option at the top -->
+                <button wire:click="selectProject()" @class([
+                    'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75',
+                    'w-full mx-1',
+                    'bg-primary-50 text-primary-600 dark:bg-primary-400/10 dark:text-primary-400' => $selectedProject === null,
+                    'text-gray-700 hover:bg-gray-100 focus-visible:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5' => $selectedProject !== null,
+                ])>
+                    <!-- Icon -->
+                    <x-heroicon-o-square-3-stack-3d @class([
+                        'fi-sidebar-item-icon h-6 w-6',
+                        'text-primary-600 dark:text-primary-400' => $selectedProject === null,
+                        'text-gray-400 dark:text-gray-500' => $selectedProject !== null,
+                    ]) />
+
+                    <!-- Content Area -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                            <span @class([
+                                'fi-sidebar-item-label text-sm font-medium truncate',
+                                'text-primary-600 dark:text-primary-400' => $selectedProject === null,
+                                'text-gray-700 dark:text-gray-200' => $selectedProject !== null,
+                            ])>
+                                All Projects
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Active Indicator -->
+                    @if($selectedProject === null)
+                        <x-heroicon-o-check class="h-4 w-4 text-primary-600 dark:text-primary-400 ml-2" />
+                    @endif
+                </button>
+
                 @forelse($projects as $project)
                     <button wire:click="selectProject({{ $project['id'] }})" @class([
                         'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75',
@@ -158,14 +191,14 @@
             ]
         ],
         [
-            'label' => 'Absensi',
+            'label' => 'Attendance',
             'collapsible' => true,
             'defaultOpen' => true,
             'icon' => 'heroicon-o-cog-6-tooth',
             'allowedRoles' => ['super_admin', 'admin', 'spv'],
             'items' => [
                 [
-                    'name' => 'Jadwal Absensi',
+                    'name' => 'Jadwal Attendance',
                     'route' => 'filament.admin.resources.schedule-absences.index',
                     'icon' => 'heroicon-o-calendar',
                     'badge' => $pendingAbsences ?? null,
@@ -173,7 +206,7 @@
                     'allowedRoles' => ['super_admin', 'admin'],
                 ],
                 [
-                    'name' => 'Data Absensi',
+                    'name' => 'Data Attendance',
                     'route' => 'filament.admin.resources.absences.index',
                     'icon' => 'heroicon-o-user-group',
                     'badge' => null,
@@ -181,7 +214,7 @@
                     'allowedRoles' => ['super_admin', 'admin', 'spv'],
                 ],
                 [
-                    'name' => 'Rekap Absensi',
+                    'name' => 'Rekap Attendance',
                     'route' => 'filament.admin.resources.recap-absences.index',
                     'icon' => 'heroicon-o-briefcase',
                     'badge' => null,
@@ -218,7 +251,7 @@
                     'route' => 'filament.admin.resources.recap-absences.index',
                     'icon' => 'heroicon-o-briefcase',
                     'badge' => null,
-                    'activeOn' => ['filament.admin.resources.recap-absences.index'],
+                    'activeOn' => ['filament.admin.resources.overtime-assignments.*'],
                     'allowedRoles' => ['super_admin', 'admin'],
                 ],
             ]

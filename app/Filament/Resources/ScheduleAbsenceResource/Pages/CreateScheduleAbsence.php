@@ -9,6 +9,10 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateScheduleAbsence extends CreateRecord
 {
+    public function getTitle(): string
+    {
+        return 'Buat Jadwal Attendance';
+    }
 
     protected static string $resource = ScheduleAbsenceResource::class;
     protected function mutateFormDataBeforeCreate(array $data): array

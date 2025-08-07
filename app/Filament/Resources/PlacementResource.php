@@ -75,15 +75,7 @@ class PlacementResource extends Resource
                     ->disabled(fn(callable $get) => $get('status') === 'office_hour')
                     ->dehydrated(fn(callable $get) => $get('status') === 'office_hour' || $get('checkout_time') !== null)
                     ->reactive(),
-
-                Forms\Components\MultiSelect::make('manpower_user_ids')
-                    ->label('Pilih Man Power')
-                    ->options(User::role('man_power')->pluck('name', 'id'))
-                    ->default(fn($record) => $record?->manpower_user_ids?->pluck('user_id')->toArray() ?? [])
-                    ->searchable()
-                    
-                    ->required(),
-
+                
                 Forms\Components\Select::make('project_id')
                     ->label('Pilih Project')
                     ->options(Project::pluck('name', 'id'))

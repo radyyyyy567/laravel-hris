@@ -10,36 +10,9 @@ class CreateProject extends CreateRecord
 {
     protected static string $resource = ProjectResource::class;
 
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-
-        $this->picUserId = $data['pic_user_id'] ?? auth()->id();
-        
-        $this->placementId = $data['placement_id'] ?? null;
-
-
-        unset($data['pic_user_id']);
-        
-        unset($data['placement_id']);
-
-        return $data;
-    }
-
-    protected function afterCreate(): void
-    {
-
-        $this->record->pic()->create([
-            'user_id' => $this->picUserId,
-        ]);
-
-       
-        
-
     
-      
 
 
-    }
 
     public static function canAccess(array $parameters = []): bool
     {

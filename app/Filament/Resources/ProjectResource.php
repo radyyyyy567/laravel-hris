@@ -74,15 +74,7 @@ class ProjectResource extends Resource
                 RichEditor::make('description')->columnSpanFull(),
                 TextInput::make('status'),
                 
-                Select::make('pic_user_id')
-                    ->label('Pilih Supervisor')
-                    ->options(User::role('spv')->pluck('name', 'id'))
-                    ->default(fn($record) => $record?->pic?->user_id)
-                    ->searchable()
-                    ->required()
             
-                
-              
             ]);
 
 
@@ -99,9 +91,6 @@ class ProjectResource extends Resource
                 TextColumn::make('description')->html(),
                 TextColumn::make('status'),
                 ImageColumn::make('logo')->label('Logo'),
-                TextColumn::make('pic.user.name')->label('PIC'),
-                TextColumn::make('manpower.user.name')->label('Man Power'),
-
             ])
             ->filters([
                 //

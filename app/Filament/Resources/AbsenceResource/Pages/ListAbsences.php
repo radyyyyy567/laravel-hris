@@ -10,6 +10,11 @@ class ListAbsences extends ListRecords
 {
     protected static string $resource = AbsenceResource::class;
 
+public function getTitle(): string
+    {
+        return 'Attendance';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

@@ -21,9 +21,13 @@ class AbsenceResource extends Resource
     protected static ?string $navigationGroup = 'Absensi';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+public static function getBreadcrumb(): string
+    {
+        return 'Attendance';
+    }
     public static function form(Form $form): Form
     {
+        
         return $form
             ->schema([
                 //

@@ -43,7 +43,7 @@ class LoginManpower extends BaseLogin
 
         $this->validate();
 
-        if (! auth()->attempt([
+        if (!auth()->attempt([
             'email' => $this->data['email'],
             'password' => $this->data['password'],
         ], $this->data['remember'])) {

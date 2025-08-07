@@ -10,7 +10,10 @@ class EditScheduleAbsence extends EditRecord
 {
     protected static string $resource = ScheduleAbsenceResource::class;
 
-
+public function getTitle(): string
+    {
+        return 'Edit Jadwal Attendance';
+    }
     public function mutateFormDataBeforeSave(array $data): array
     {
         if (is_array($data['long_lat'])) {

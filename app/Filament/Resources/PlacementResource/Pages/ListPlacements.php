@@ -11,6 +11,8 @@ class ListPlacements extends ListRecords
 {
     protected static string $resource = PlacementResource::class;
 
+
+    
     protected function getHeaderActions(): array
     {
         return [

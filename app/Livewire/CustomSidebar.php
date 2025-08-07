@@ -10,6 +10,7 @@ class CustomSidebar extends Component
     public $isOpen = false;
     public $selectedProject = null;
     public $projects = [];
+    public $showAllOption = true;
     
     public function mount()
     {
@@ -23,9 +24,9 @@ class CustomSidebar extends Component
             return [
                 'id' => $project->id,
                 'label' => $project->name,
-                'icon' => $project->icon, // Uses the getIconAttribute() method
-                'url' => $project->url, // Uses the getUrlAttribute() method
-                'active' => false, // We'll set this separately
+                'icon' => $project->icon,
+                'url' => $project->url,
+                'active' => false,
                 'description' => $project->description,
                 'status' => $project->status,
             ];
@@ -34,17 +35,12 @@ class CustomSidebar extends Component
     
     private function initializeSelectedProject()
     {
-        // Priority order for determining selected project:
-        // 1. URL query parameter 'project'
-        // 2. Session stored project
-        // 3. Current route project (from URL pattern)
-        // 4. First available project
-        
         $selectedProjectId = null;
         
         // Check URL query parameter first
-        if (request()->get('project')) {
-            $selectedProjectId = request()->get('project');
+        $projectParam = request()->get('project');
+        if ($projectParam !== null) { // Check if parameter exists (even if empty)
+            $selectedProjectId = $projectParam === '' ? null : $projectParam;
         }
         // Check session
         elseif (session()->has('selected_project_id')) {
@@ -61,8 +57,12 @@ class CustomSidebar extends Component
         }
         
         // Set the selected project and update active states
-        if ($selectedProjectId) {
+        if ($selectedProjectId !== null) {
             $this->setSelectedProject($selectedProjectId);
+        } elseif ($projectParam === '') {
+            // This is the "All" case
+            $this->selectedProject = null;
+            session(['selected_project_id' => null]);
         } else {
             // Default to first project if none selected
             $this->selectedProject = $this->projects[0] ?? null;
@@ -96,40 +96,54 @@ class CustomSidebar extends Component
         $this->isOpen = !$this->isOpen;
     }
     
-    public function selectProject($projectId)
+    public function selectProject($projectId = null)
     {
-        $project = collect($this->projects)->firstWhere('id', $projectId);
-        
-        if ($project) {
-            // Update the selected project
-            $this->setSelectedProject($projectId);
+        if ($projectId === null) {
+            // This is the "All" case
+            $this->selectedProject = null;
             $this->isOpen = false;
+            session(['selected_project_id' => null]);
             
-            // Get current route and add project parameter
-            $currentRoute = request()->route()->getName();
-            $currentUrl = url()->current();
+            // Update active states for all projects
+            $this->projects = collect($this->projects)->map(function ($proj) {
+                $proj['active'] = false;
+                return $proj;
+            })->toArray();
+        } else {
+            $project = collect($this->projects)->firstWhere('id', $projectId);
             
-            // Build the redirect URL with project parameter
-            $queryParams = request()->query();
-            $queryParams['project'] = $projectId;
-            
-            $targetUrl = '/admin?' . http_build_query($queryParams);
-            
-            // Emit event to notify other components about project change
-            $this->dispatch('project-changed', projectId: $projectId);
-            
-            // Force a full page redirect to maintain project context
-            return redirect()->to($targetUrl);
+            if ($project) {
+                // Update the selected project
+                $this->setSelectedProject($projectId);
+            }
+            $this->isOpen = false;
         }
+        
+        // Get current route and add project parameter
+        $queryParams = request()->query();
+        
+        // For "All" we set empty project param, otherwise set the ID
+        $queryParams['project'] = $projectId === null ? '' : $projectId;
+        
+        // Remove the param if it's null (clean URL)
+        if ($queryParams['project'] === '') {
+            unset($queryParams['project']);
+        }
+        
+        $targetUrl = 'admin?' . http_build_query($queryParams);
+        
+        // Emit event to notify other components about project change
+        $this->dispatch('project-changed', projectId: $projectId);
+        
+        // Force a full page redirect to maintain project context
+        return redirect()->to($targetUrl);
     }
     
-    // Method to get current project ID for use in navigation URLs
     public function getCurrentProjectId()
     {
         return $this->selectedProject['id'] ?? null;
     }
     
-    // Method to refresh projects if needed
     public function refreshProjects()
     {
         $currentSelectedId = $this->selectedProject['id'] ?? null;
@@ -140,7 +154,6 @@ class CustomSidebar extends Component
         }
     }
     
-    // Handle project updates from other components
     protected function getListeners()
     {
         return [

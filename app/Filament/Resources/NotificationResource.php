@@ -77,7 +77,10 @@ class NotificationResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+    ->url(fn ($record): string => route('filament.admin.resources.manpowers.edit', [
+        'record' => $record->getKey(),
+    ]) . '?project=' . request()->get('project')),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

@@ -4,7 +4,9 @@ namespace App\Filament\Resources\ManpowerResource\Pages;
 
 use App\Filament\Resources\ManpowerResource;
 use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Request;
 
 class ListManpowers extends ListRecords
 {
@@ -18,7 +20,9 @@ class ListManpowers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Tambah Man Power'),
+            CreateAction::make()
+    ->label('Tambah Man Power')
+    ->url(fn () => url('/admin/manpowers/create?project=' . Request::get('project')))
         ];
     }
 }

@@ -73,27 +73,16 @@ class ProjectResource extends Resource
                     ->nullable(),
                 RichEditor::make('description')->columnSpanFull(),
                 TextInput::make('status'),
-                Auth::user()->hasRole('super_admin')
-                ? Select::make('pic_user_id')
-                    ->label('Pilih PIC')
-                    ->options(User::role('pic')->pluck('name', 'id'))
+                
+                Select::make('pic_user_id')
+                    ->label('Pilih Supervisor')
+                    ->options(User::role('spv')->pluck('name', 'id'))
                     ->default(fn($record) => $record?->pic?->user_id)
                     ->searchable()
                     ->required()
-                : Hidden::make('pic_user_id')
-                    ->default(fn() => auth()->id()),
-                Select::make('placement_id')
-                    ->label('Pilih Penempatan')
-                    ->options(Placement::where('status', 'ready')->pluck('name', 'id'))
-                    ->default(fn($record) => $record?->placement_id)
-                    ->searchable()
-                    ->required(),
-                MultiSelect::make('manpower_user_ids')
-                    ->label('Pilih Man Power')
-                    ->options(User::role('man_power')->pluck('name', 'id'))
-                    ->default(fn($record) => $record?->manpower?->pluck('user_id')->toArray() ?? [])
-                    ->searchable()
-                    ->required(),
+            
+                
+              
             ]);
 
 

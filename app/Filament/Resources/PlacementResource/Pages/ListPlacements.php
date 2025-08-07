@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PlacementResource\Pages;
 use App\Filament\Resources\PlacementResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListPlacements extends ListRecords
 {
@@ -16,4 +17,6 @@ class ListPlacements extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+ 
 }

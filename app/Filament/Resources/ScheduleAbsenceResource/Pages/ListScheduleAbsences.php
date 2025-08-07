@@ -5,7 +5,9 @@ namespace App\Filament\Resources\ScheduleAbsenceResource\Pages;
 use App\Filament\Resources\ScheduleAbsenceResource;
 use App\Imports\ScheduleAbsenceImport;
 use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Request;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use pxlrbt\FilamentExcel\Columns\Column;
@@ -67,7 +69,9 @@ class ListScheduleAbsences extends ListRecords
             ->icon('heroicon-m-calendar')
             ->requiresConfirmation(),
     ),
-            Actions\CreateAction::make()->label("Tambah Jadwal Absensi"),
+            CreateAction::make()
+    ->label('Tambah Man Power')
+    ->url(fn () => url('/admin/schedule-absences/create?project=' . Request::get('project')))
         ];
     }
     

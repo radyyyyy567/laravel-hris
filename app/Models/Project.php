@@ -27,7 +27,7 @@ class Project extends Model
 
      public function placement()
     {
-        return $this->hasOne(RelationPlacementProject::class);
+        return $this->hasMany(RelationPlacementProject::class);
     }
 
 

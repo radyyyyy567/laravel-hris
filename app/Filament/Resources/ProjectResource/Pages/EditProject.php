@@ -22,6 +22,7 @@ class EditProject extends EditRecord
 
         $data['manpower_user_ids'] = $this->record->manpower->pluck('user_id')->toArray();
 
+        
         return $data;
     }
 

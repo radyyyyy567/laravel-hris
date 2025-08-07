@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Model;
 
-class RelationPlacementProject extends Model
+class RelationPlacementUser extends Model
 {
     //
     protected $guarded = [];
@@ -15,8 +15,8 @@ class RelationPlacementProject extends Model
         return $this->belongsTo(related: Placement::class);
     }
 
-    public function project()
+    public function user()
     {
-        return $this->belongsTo(related: Project::class);
+        return $this->belongsTo(related: User::class);
     }
 }

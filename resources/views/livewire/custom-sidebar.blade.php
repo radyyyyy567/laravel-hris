@@ -1,6 +1,4 @@
-<!-- Enhanced Navigation Menu Items with Group Dropdowns -->
 <div>
-    <!-- Your Project Dropdown -->
     <div class="relative mb-4" x-data="{ open: @entangle('isOpen') }">
         <!-- Dropdown Toggle Button -->
         <button wire:click="toggleDropdown" @click.away="open = false" @class([
@@ -94,321 +92,327 @@
         </div>
     </div>
 
-    @php
-        // Enhanced navigation structure with collapsible groups
-        $navigationGroups = [
-            [
-                'label' => null, // No label for main group
-                'collapsible' => false,
-                'defaultOpen' => true,
-                'items' => [
-                    [
-                        'name' => 'Dashboard',
-                        'route' => 'filament.admin.pages.dashboard',
-                        'icon' => 'heroicon-o-squares-2x2',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.pages.dashboard'],
-                    ],
-                ]
-            ],
-            [
-                'label' => null, // No label for main group
-                'collapsible' => false,
-                'defaultOpen' => true,
-                'items' => [
-                    [
-                        'name' => 'Man power',
-                        'route' => 'filament.admin.resources.manpowers.index',
-                        'icon' => 'heroicon-o-squares-2x2',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.resources.manpowers.*'],
-                    ],
-                ]
-            ],
-            [
-                'label' => 'Absensi',
-                'collapsible' => true,
-                'defaultOpen' => true,
-                'icon' => 'heroicon-o-cog-6-tooth',
-                'items' => [
-                    [
-                        'name' => 'Jadwal Absensi',
-                        'route' => 'filament.admin.resources.schedule-absences.index',
-                        'icon' => 'heroicon-o-calendar',
-                        'badge' => $pendingAbsences ?? null,
-                        'activeOn' => ['filament.admin.resources.schedule-absences.*'],
-                    ],
-                    [
-                        'name' => 'Data Absensi',
-                        'route' => 'filament.admin.resources.absences.index',
-                        'icon' => 'heroicon-o-user-group',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.resources.absences.*'],
-                    ],
-                    [
-                        'name' => 'Rekap Absensi',
-                        'route' => 'filament.admin.resources.recap-absences.index',
-                        'icon' => 'heroicon-o-briefcase',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.resources.recap-absences.*'],
-                    ],
-                ]
-            ],
-            [
-                'label' => 'Pengajuan',
-                'collapsible' => true,
-                'defaultOpen' => true,
-                'icon' => 'heroicon-o-cog-6-tooth',
-                'items' => [
-                    [
-                        'name' => 'Daftar Pengajuan',
-                        'route' => 'filament.admin.resources.overtime-assignments.index',
-                        'icon' => 'heroicon-o-calendar',
-                        'badge' => $pendingAbsences ?? null,
-                        'activeOn' => ['filament.admin.resources.overtime-assigements.*'],
-                    ],
-                    [
-                        'name' => 'Riwayat Pengajuan',
-                        'route' => 'filament.admin.resources.groups.index',
-                        'icon' => 'heroicon-o-user-group',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.resources.groups.*'],
-                    ],
-                    [
-                        'name' => 'Pengajuan Hold',
-                        'route' => 'filament.admin.resources.recap-absences.index',
-                        'icon' => 'heroicon-o-briefcase',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.resources.recap-absences.index'],
-                    ],
-                ]
-            ],
-             [
-                'label' => null, // No label for main group
-                'collapsible' => false,
-                'defaultOpen' => true,
-                'items' => [
-                    [
-                        'name' => 'Penempatan',
-                        'route' => 'filament.admin.resources.placements.index',
-                        'icon' => 'heroicon-o-squares-2x2',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.resources.placements.*'],
-                    ],
-                ]
-            ],
-            [
-                'label' => 'Proyek',
-                'collapsible' => true,
-                'defaultOpen' => false,
-                'icon' => 'heroicon-o-building-office-2',
-                'items' => [
-                    [
-                        'name' => 'Penempatan Proyek',
-                        'route' => 'filament.admin.resources.projects.index',
-                        'icon' => 'heroicon-o-building-office',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.resources.projects.*'],
-                    ],
-                    [
-                        'name' => 'Pengaturan Proyek',
-                        'route' => 'filament.admin.resources.users.index',
-                        'icon' => 'heroicon-o-building-office',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin  .resources.users.*'],
-                    ],
-                ]
-            ],
-            [
-                'label' => null, // No label for main group
-                'collapsible' => false,
-                'defaultOpen' => true,
-                'items' => [
-                    [
-                        'name' => 'Data project',
-                        'route' => 'filament.admin.pages.dashboard',
-                        'icon' => 'heroicon-o-squares-2x2',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.pages.dashboard'],
-                    ],
-                ]
-            ],
-            [
-                'label' => null, // No label for main group
-                'collapsible' => false,
-                'defaultOpen' => true,
-                'items' => [
-                    [
-                        'name' => 'Data Pengguna',
-                        'route' => 'filament.admin.resources.users.index',
-                        'icon' => 'heroicon-o-squares-2x2',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.resources.users'],
-                    ],
-                ]
-            ],
-             [
-                'label' => null, // No label for main group
-                'collapsible' => false,
-                'defaultOpen' => true,
-                'items' => [
-                    [
-                        'name' => 'Notifikasi',
-                        'route' => 'filament.admin.resources.notifications.index',
-                        'icon' => 'heroicon-o-bell',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.resources.notifications.*'],
-                    ],
-                ]
-            ],
-            [
-                'label' => null, // No label for main group
-                'collapsible' => false,
-                'defaultOpen' => true,
-                'items' => [
-                    [
-                        'name' => 'Data Group',
-                        'route' => 'filament.admin.resources.groups.index',
-                        'icon' => 'heroicon-o-squares-2x2',
-                        'badge' => null,
-                        'activeOn' => ['filament.admin.resources.groups.*'],
-                    ],
-                ]
-            ],
-        ];
-    @endphp
+@php
+    // Helper function to build URL with project parameter
+    function buildRouteWithProject($routeName, $projectId = null) {
+        if ($routeName === 'edit_project') {
+            return $projectId ? "/admin/projects/{$projectId}/edit" : '/admin/projects';
+        }
+        
+        try {
+            if (!Route::has($routeName)) {
+                return '#';
+            }
+            
+            $url = route($routeName);
+            
+            if ($projectId) {
+                $separator = strpos($url, '?') !== false ? '&' : '?';
+                $url .= $separator . 'project=' . $projectId;
+            }
+            
+            return $url;
+        } catch (\Exception $e) {
+            return '#';
+        }
+    }
+    
+    // Helper function to check if user has access to menu item
+    function hasAccess($allowedRoles, $userRole) {
+        if (empty($allowedRoles)) return true;
+        return in_array($userRole, $allowedRoles);
+    }
+    
+    // Enhanced navigation structure with role-based access control
+    $navigationGroups = [
+        [
+            'label' => null,
+            'collapsible' => false,
+            'defaultOpen' => true,
+            'allowedRoles' => [],
+            'items' => [
+                [
+                    'name' => 'Dashboard',
+                    'route' => 'filament.admin.pages.dashboard',
+                    'icon' => 'heroicon-o-squares-2x2',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.pages.dashboard'],
+                    'allowedRoles' => ['super_admin', 'admin'],
+                ],
+            ]
+        ],
+        [
+            'label' => null,
+            'collapsible' => false,
+            'defaultOpen' => true,
+            'allowedRoles' => ['super_admin', 'admin'],
+            'items' => [
+                [
+                    'name' => 'Man power',
+                    'route' => 'filament.admin.resources.manpowers.index',
+                    'icon' => 'heroicon-o-squares-2x2',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.manpowers.*'],
+                    'allowedRoles' => ['super_admin', 'admin', 'spv'],
+                ],
+            ]
+        ],
+        [
+            'label' => 'Absensi',
+            'collapsible' => true,
+            'defaultOpen' => true,
+            'icon' => 'heroicon-o-cog-6-tooth',
+            'allowedRoles' => ['super_admin', 'admin', 'spv'],
+            'items' => [
+                [
+                    'name' => 'Jadwal Absensi',
+                    'route' => 'filament.admin.resources.schedule-absences.index',
+                    'icon' => 'heroicon-o-calendar',
+                    'badge' => $pendingAbsences ?? null,
+                    'activeOn' => ['filament.admin.resources.schedule-absences.*'],
+                    'allowedRoles' => ['super_admin', 'admin'],
+                ],
+                [
+                    'name' => 'Data Absensi',
+                    'route' => 'filament.admin.resources.absences.index',
+                    'icon' => 'heroicon-o-user-group',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.absences.*'],
+                    'allowedRoles' => ['super_admin', 'admin', 'spv'],
+                ],
+                [
+                    'name' => 'Rekap Absensi',
+                    'route' => 'filament.admin.resources.recap-absences.index',
+                    'icon' => 'heroicon-o-briefcase',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.recap-absences.*'],
+                    'allowedRoles' => ['super_admin', 'admin', 'spv'],
+                ],
+            ]
+        ],
+        [
+            'label' => 'Pengajuan',
+            'collapsible' => true,
+            'defaultOpen' => true,
+            'icon' => 'heroicon-o-cog-6-tooth',
+            'allowedRoles' => ['super_admin', 'admin', 'spv'],
+            'items' => [
+                [
+                    'name' => 'Daftar Pengajuan',
+                    'route' => 'filament.admin.resources.overtime-assignments.index',
+                    'icon' => 'heroicon-o-calendar',
+                    'badge' => $pendingAbsences ?? null,
+                    'activeOn' => ['filament.admin.resources.overtime-assignments.*'],
+                    'allowedRoles' => ['super_admin', 'admin', 'spv'],
+                ],
+                [
+                    'name' => 'Riwayat Pengajuan',
+                    'route' => 'filament.admin.resources.groups.index',
+                    'icon' => 'heroicon-o-user-group',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.groups.*'],
+                    'allowedRoles' => ['super_admin', 'admin', 'spv'],
+                ],
+                [
+                    'name' => 'Pengajuan Hold',
+                    'route' => 'filament.admin.resources.recap-absences.index',
+                    'icon' => 'heroicon-o-briefcase',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.recap-absences.index'],
+                    'allowedRoles' => ['super_admin', 'admin'],
+                ],
+            ]
+        ],
+        [
+            'label' => 'Proyek',
+            'collapsible' => true,
+            'defaultOpen' => false,
+            'icon' => 'heroicon-o-building-office-2',
+            'allowedRoles' => ['super_admin'],
+            'items' => [
+                [
+                    'name' => 'Penempatan Proyek',
+                    'route' => 'filament.admin.resources.placements.index',
+                    'icon' => 'heroicon-o-building-office',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.placements.*'],
+                    'allowedRoles' => ['super_admin', 'admin'],
+                ],
+                [
+                    'name' => 'Pengaturan Proyek',
+                    'route' => 'edit_project',
+                    'icon' => 'heroicon-o-building-office',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.projects.edit'],
+                    'allowedRoles' => ['super_admin', 'admin'],
+                ],
+            ]
+        ],
+        [
+            'label' => null,
+            'collapsible' => false,
+            'defaultOpen' => true,
+            'allowedRoles' => ['super_admin', 'admin'],
+            'items' => [
+                [
+                    'name' => 'Data Proyek',
+                    'route' => 'filament.admin.resources.projects.index',
+                    'icon' => 'heroicon-o-squares-2x2',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.projects.*'],
+                    'allowedRoles' => ['super_admin', 'admin'],
+                ],
+            ]
+        ],
+        [
+            'label' => null,
+            'collapsible' => false,
+            'defaultOpen' => true,
+            'allowedRoles' => ['super_admin'],
+            'items' => [
+                [
+                    'name' => 'Data Pengguna',
+                    'route' => 'filament.admin.resources.users.index',
+                    'icon' => 'heroicon-o-squares-2x2',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.users.*'],
+                    'allowedRoles' => ['super_admin'],
+                ],
+            ]
+        ],
+        [
+            'label' => null,
+            'collapsible' => false,
+            'defaultOpen' => true,
+            'allowedRoles' => [],
+            'items' => [
+                [
+                    'name' => 'Notifikasi',
+                    'route' => 'filament.admin.resources.notifications.index',
+                    'icon' => 'heroicon-o-bell',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.notifications.*'],
+                    'allowedRoles' => [],
+                ],
+            ]
+        ],
+        [
+            'label' => null,
+            'collapsible' => false,
+            'defaultOpen' => true,
+            'allowedRoles' => ['super_admin', 'admin'],
+            'items' => [
+                [
+                    'name' => 'Data Group',
+                    'route' => 'filament.admin.resources.groups.index',
+                    'icon' => 'heroicon-o-squares-2x2',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.groups.*'],
+                    'allowedRoles' => ['super_admin', 'admin'],
+                ],
+            ]
+        ],
+    ];
+    
+    // Filter navigation groups based on user role
+    $filteredNavigationGroups = [];
+    foreach ($navigationGroups as $group) {
+        if (!hasAccess($group['allowedRoles'], $user_role)) {
+            continue;
+        }
+        
+        $filteredItems = [];
+        foreach ($group['items'] as $item) {
+            if (hasAccess($item['allowedRoles'], $user_role)) {
+                $filteredItems[] = $item;
+            }
+        }
+        
+        if (!empty($filteredItems)) {
+            $group['items'] = $filteredItems;
+            $filteredNavigationGroups[] = $group;
+        }
+    }
+@endphp
 
-    <!-- Navigation Groups with Dropdowns -->
-    <nav class="fi-sidebar-nav flex flex-col gap-y-2">
-        @foreach ($navigationGroups as $groupIndex => $group)
-            @php
-                // Check if any item in the group is active
-                $hasActiveItem = false;
-                foreach($group['items'] as $item) {
-                    foreach($item['activeOn'] as $pattern) {
-                        if(request()->routeIs($pattern)) {
-                            $hasActiveItem = true;
-                            break 2;
-                        }
+<!-- Navigation Groups with Role-Based Access Control -->
+<nav class="fi-sidebar-nav flex flex-col gap-y-2">
+    @foreach ($filteredNavigationGroups as $groupIndex => $group)
+        @php
+            // Check if any item in the group is active
+            $hasActiveItem = false;
+            foreach($group['items'] as $item) {
+                foreach($item['activeOn'] as $pattern) {
+                    if(request()->routeIs($pattern)) {
+                        $hasActiveItem = true;
+                        break 2;
                     }
                 }
-                
-                // Generate unique Alpine data key for each group
-                $alpineKey = 'group_' . $groupIndex;
-            @endphp
-            
-            <div @class([
-                'fi-sidebar-group flex flex-col',
-                'pt-2' => $groupIndex > 0 && $group['label']
-            ])>
-                @if($group['label'])
-                    @if($group['collapsible'])
-                        <!-- Collapsible Group Header -->
-                        <div x-data="{ open: {{ $group['defaultOpen'] || $hasActiveItem ? 'true' : 'false' }} }">
-                            <button @click="open = !open" @class([
-                                'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg py-2 p-2 -mx-2 outline-none transition duration-75 w-full',
-                                'hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
-                                'bg-gray-50 dark:bg-white/5' => $hasActiveItem,
-                            ])>
-                                @if(isset($group['icon']))
-                                    <x-dynamic-component :component="$group['icon']" @class([
-                                        'fi-sidebar-item-icon',
-                                        'text-primary-600 dark:text-primary-400' => $hasActiveItem,
-                                        'text-gray-400 dark:text-gray-500' => !$hasActiveItem,
-                                    ]) style="width: 24px; height: 24px" />
-                                @endif
-                                
-                                <span @class([
-                                    'fi-sidebar-item-label flex-1 text-left text-sm font-medium',
-                                    'text-primary-600 dark:text-primary-400' => $hasActiveItem,
-                                    'text-gray-700 dark:text-gray-200' => !$hasActiveItem,
-                                ])>
-                                    {{ $group['label'] }}
-                                </span>
-
-                                <x-heroicon-o-chevron-down @class([
-                                    'h-4 w-4 transition-transform duration-200',
+            }
+        @endphp
+        
+        <div @class([
+            'fi-sidebar-group flex flex-col',
+            'pt-2' => $groupIndex > 0 && $group['label']
+        ])>
+            @if($group['label'])
+                @if($group['collapsible'])
+                    <!-- Collapsible Group Header -->
+                    <div x-data="{ open: {{ $group['defaultOpen'] || $hasActiveItem ? 'true' : 'false' }} }">
+                        <button @click="open = !open" @class([
+                            'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg py-2 p-2 -mx-2 outline-none transition duration-75 w-full',
+                            'hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
+                            'bg-gray-50 dark:bg-white/5' => $hasActiveItem,
+                        ])>
+                            @if(isset($group['icon']))
+                                <x-dynamic-component :component="$group['icon']" @class([
+                                    'fi-sidebar-item-icon',
                                     'text-primary-600 dark:text-primary-400' => $hasActiveItem,
                                     'text-gray-400 dark:text-gray-500' => !$hasActiveItem,
-                                ]) 
-                                x-bind:class="{ 'rotate-180': open }" />
-                            </button>
-
-                            <!-- Collapsible Group Items -->
-                            <div x-show="open" 
-                                 x-transition:enter="transition duration-200"
-                                 x-transition:enter-start="opacity-0 -translate-y-2"
-                                 x-transition:enter-end="opacity-100 translate-y-0"
-                                 x-transition:leave="transition ease-in duration-150"
-                                 x-transition:leave-start="opacity-100 translate-y-0"
-                                 x-transition:leave-end="opacity-0 -translate-y-2"
-                                 class="ml-4 mt-1 space-y-1">
-                                @foreach($group['items'] as $item)
-                                    @php
-                                        $isActive = false;
-                                        foreach($item['activeOn'] as $pattern) {
-                                            if(request()->routeIs($pattern)) {
-                                                $isActive = true;
-                                                break;
-                                            }
-                                        }
-                                    @endphp
-                                    
-                                    <a href="{{ route($item['route']) }}" @class([
-                                        'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg py-2 outline-none transition duration-75',
-                                        'fi-active fi-sidebar-item-active bg-gray-100 dark:bg-white/5' => $isActive,
-                                        'hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5' => !$isActive,
-                                    ])>
-                                        <x-dynamic-component :component="$item['icon']" @class([
-                                            'fi-sidebar-item-icon h-[24px] w-[24px]',
-                                            'text-primary-600 dark:text-primary-400' => $isActive,
-                                            'text-gray-400 dark:text-gray-500' => !$isActive,
-                                        ]) />
-                                        
-                                        <span @class([
-                                            'fi-sidebar-item-label flex-1 text-sm font-medium',
-                                            'text-primary-600 dark:text-primary-400' => $isActive,
-                                            'text-gray-700 dark:text-gray-200' => !$isActive,
-                                        ])>
-                                            {{ $item['name'] }}
-                                        </span>
-
-                                        @if($item['badge'])
-                                            <span class="fi-sidebar-item-badge inline-flex items-center justify-center min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight bg-gray-100 text-gray-800 rounded-md dark:bg-gray-800 dark:text-gray-200">
-                                                {{ $item['badge'] }}
-                                            </span>
-                                        @endif
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
-                    @else
-                        <!-- Non-collapsible Group Label -->
-                        <div class="fi-sidebar-group-label px-2 py-2">
-                            <span class="text-xs font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                                ]) style="width: 24px; height: 24px" />
+                            @endif
+                            
+                            <span @class([
+                                'fi-sidebar-item-label flex-1 text-left text-sm font-medium',
+                                'text-primary-600 dark:text-primary-400' => $hasActiveItem,
+                                'text-gray-700 dark:text-gray-200' => !$hasActiveItem,
+                            ])>
                                 {{ $group['label'] }}
                             </span>
-                        </div>
-                    @endif
-                @endif
 
-                @if(!$group['collapsible'])
-                    <!-- Non-collapsible Group Items -->
-                    <ul class="fi-sidebar-nav-groups flex flex-col gap-y-1">
-                        @foreach($group['items'] as $item)
-                            @php
-                                $isActive = false;
-                                foreach($item['activeOn'] as $pattern) {
-                                    if(request()->routeIs($pattern)) {
-                                        $isActive = true;
-                                        break;
+                            <x-heroicon-o-chevron-down @class([
+                                'h-4 w-4 transition-transform duration-200',
+                                'text-primary-600 dark:text-primary-400' => $hasActiveItem,
+                                'text-gray-400 dark:text-gray-500' => !$hasActiveItem,
+                            ]) 
+                            x-bind:class="{ 'rotate-180': open }" />
+                        </button>
+
+                        <!-- Collapsible Group Items -->
+                        <div x-show="open" 
+                             x-transition:enter="transition duration-200"
+                             x-transition:enter-start="opacity-0 -translate-y-2"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 -translate-y-2"
+                             class="ml-4 mt-1 space-y-1">
+                            @foreach($group['items'] as $item)
+                                @php
+                                    $isActive = false;
+                                    foreach($item['activeOn'] as $pattern) {
+                                        if(request()->routeIs($pattern)) {
+                                            $isActive = true;
+                                            break;
+                                        }
                                     }
-                                }
-                            @endphp
-                            
-                            <li class="fi-sidebar-nav-item">
-                                <a href="{{ route($item['route']) }}" @class([
-                                    'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 -mx-2 py-2 outline-none transition duration-75',
+                                    
+                                    // Build URL with project parameter
+                                    $itemUrl = buildRouteWithProject($item['route'], $currentProjectId);
+                                @endphp
+                                
+                                <a href="{{ $itemUrl }}" @class([
+                                    'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg py-2 outline-none transition duration-75',
                                     'fi-active fi-sidebar-item-active bg-gray-100 dark:bg-white/5' => $isActive,
                                     'hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5' => !$isActive,
                                 ])>
@@ -432,11 +436,60 @@
                                         </span>
                                     @endif
                                 </a>
-                            </li>
-                        @endforeach
-                    </ul>
+                            @endforeach
+                        </div>
+                    </div>
                 @endif
-            </div>
-        @endforeach
-    </nav>
+            @endif
+
+            @if(!$group['collapsible'])
+                <!-- Non-collapsible Group Items -->
+                <ul class="fi-sidebar-nav-groups flex flex-col gap-y-1">
+                    @foreach($group['items'] as $item)
+                        @php
+                            $isActive = false;
+                            foreach($item['activeOn'] as $pattern) {
+                                if(request()->routeIs($pattern)) {
+                                    $isActive = true;
+                                    break;
+                                }
+                            }
+                            
+                            // Build URL with project parameter
+                            $itemUrl = buildRouteWithProject($item['route'], $currentProjectId);
+                        @endphp
+                        
+                        <li class="fi-sidebar-nav-item">
+                            <a href="{{ $itemUrl }}" @class([
+                                'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 -mx-2 py-2 outline-none transition duration-75',
+                                'fi-active fi-sidebar-item-active bg-gray-100 dark:bg-white/5' => $isActive,
+                                'hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5' => !$isActive,
+                            ])>
+                                <x-dynamic-component :component="$item['icon']" @class([
+                                    'fi-sidebar-item-icon h-[24px] w-[24px]',
+                                    'text-primary-600 dark:text-primary-400' => $isActive,
+                                    'text-gray-400 dark:text-gray-500' => !$isActive,
+                                ]) />
+                                
+                                <span @class([
+                                    'fi-sidebar-item-label flex-1 text-sm font-medium',
+                                    'text-primary-600 dark:text-primary-400' => $isActive,
+                                    'text-gray-700 dark:text-gray-200' => !$isActive,
+                                ])>
+                                    {{ $item['name'] }}
+                                </span>
+
+                                @if($item['badge'])
+                                    <span class="fi-sidebar-item-badge inline-flex items-center justify-center min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight bg-gray-100 text-gray-800 rounded-md dark:bg-gray-800 dark:text-gray-200">
+                                        {{ $item['badge'] }}
+                                    </span>
+                                @endif
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+    @endforeach
+</nav>
 </div>

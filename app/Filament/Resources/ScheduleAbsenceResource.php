@@ -20,6 +20,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Request;
 
 
 class ScheduleAbsenceResource extends Resource
@@ -31,6 +32,20 @@ class ScheduleAbsenceResource extends Resource
     {
         return 'Jadwal Absensi';
     }
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (request()->filled('project')) {
+            $projectId = request()->get('project');
+
+            $query->whereHas('manpower.user.projects', function ($q) use ($projectId) {
+                $q->where('projects.id', $projectId);
+            });
+        }
+
+        return $query;
+    }
 
     protected static ?string $navigationGroup = 'Absensi';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -39,12 +54,22 @@ class ScheduleAbsenceResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('manpower_user_id')
-                    ->label('Pilih Man Power')
-                    ->options(User::role('man_power')->pluck('name', 'id'))
-                    ->default(fn($record) => $record?->man_power?->user_id)
-                    ->searchable()
-                    ->required(),
+               Select::make('manpower_user_id')
+    ->label('Pilih Man Power')
+    ->options(fn (callable $get) => 
+        User::role('man_power')
+            ->whereHas('manpower', function ($query) use ($get) {
+                $query->where('project_id', (int) $get('project'));
+            })
+            ->pluck('name', 'id')
+    )
+    ->searchable()
+    ->required(),
+
+TextInput::make('project') // hidden field
+    ->default(fn () => request()->get('project'))
+    ->dehydrated()
+    ->hidden(),
                 DatePicker::make('absence_date')
                     ->label('Tanggal Absensi')
                     ->required(),
@@ -97,10 +122,10 @@ class ScheduleAbsenceResource extends Resource
                 TextColumn::make(name: 'manpower.user.nip')->label('NIP'),
                 TextColumn::make(name: 'name')->label('Di Buat'),
                 TextColumn::make('absence_date')
-    ->label('Tanggal Absensi')
-    ->formatStateUsing(fn ($state) => Carbon::parse($state)
-        ->locale('id') // Bahasa Indonesia
-        ->translatedFormat('l, d F Y H:i')),
+                    ->label('Tanggal Absensi')
+                    ->formatStateUsing(fn($state) => Carbon::parse($state)
+                        ->locale('id') // Bahasa Indonesia
+                        ->translatedFormat('l, d F Y H:i')),
                 TextColumn::make(name: 'checkin_time')->label('jam Masuk'),
                 TextColumn::make(name: 'checkout_time')->label('Jam Keluar'),
                 TextColumn::make(name: 'long_lat')->label('Lokasi'),

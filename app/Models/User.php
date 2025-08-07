@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -22,7 +23,7 @@ class User extends Authenticatable implements FilamentUser
      * @var list<string>
      */
 
-    
+     
 
     protected $fillable = [
         'name',
@@ -78,6 +79,19 @@ public function group()
     {
         return $this->hasMany(RelationAbsenceManpower::class);
     }
+
+        public function placement()
+    {
+        return $this->hasManyThrough(
+            Placement::class,
+            RelationPlacementUser::class,
+            'user_id',    // Foreign key on ProjectManpower
+            'id',         // Foreign key on Project
+            'id',         // Local key on User
+            'placement_id'  // Local key on ProjectManpower
+        );
+    }
+    
 
       public function notif()
     {

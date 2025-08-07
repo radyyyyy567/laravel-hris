@@ -14,12 +14,12 @@ class CreateProject extends CreateRecord
     {
 
         $this->picUserId = $data['pic_user_id'] ?? auth()->id();
-        $this->manPowerIds = $data['manpower_user_ids'];
+        
         $this->placementId = $data['placement_id'] ?? null;
 
 
         unset($data['pic_user_id']);
-        unset($data['manpower_user_ids']);
+        
         unset($data['placement_id']);
 
         return $data;
@@ -32,25 +32,11 @@ class CreateProject extends CreateRecord
             'user_id' => $this->picUserId,
         ]);
 
-        foreach ($this->manPowerIds as $userId) {
-            $this->record->manpower()->create([
-                'user_id' => $userId,
-            ]);
-        };
-
+       
         
 
-        $this->record->placement()->create([
-            'placement_id' => $this->placementId,
-        ]);
-
-        if ($this->placementId) {
-            $placement = \App\Models\Placement::find($this->placementId);
-            if ($placement) {
-                $placement->status = 'filled';
-                $placement->save();
-            }
-        }
+    
+      
 
 
     }

@@ -9,6 +9,21 @@ use Filament\Resources\Pages\EditRecord;
 class EditPlacement extends EditRecord
 {
     protected static string $resource = PlacementResource::class;
+
+     protected function mutateFormDataBeforeFill(array $data): array
+    {
+        // Make sure the relation is loaded
+
+        $this->record->loadMissing(['user', 'project']);
+
+        // Even if null, assign to form so Select/MultiSelect binds correctly
+        $data['project_id'] = $this->record->project?->project_id;
+
+        $data['manpower_user_ids'] = $this->record->user->pluck('user_id')->toArray();
+// dd($data);
+        return $data;
+    }
+
  protected function mutateFormDataBeforeSave(array $data): array
     {
 

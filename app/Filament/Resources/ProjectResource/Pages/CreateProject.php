@@ -11,7 +11,10 @@ class CreateProject extends CreateRecord
     protected static string $resource = ProjectResource::class;
 
     
-
+    protected function mutateFormDataBeforeCreate(array $data): array {
+        $data['status'] = 'Work';
+        return $data;
+    }
 
 
     public static function canAccess(array $parameters = []): bool

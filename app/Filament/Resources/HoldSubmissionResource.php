@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\OvertimeAssignmentResource\Pages;
-use App\Filament\Resources\OvertimeAssignmentResource\RelationManagers;
+use App\Filament\Resources\HoldSubmissionResource\Pages;
+use App\Filament\Resources\HoldSubmissionResource\RelationManagers;
 use App\Models\OvertimeAssignment;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class OvertimeAssignmentResource extends Resource
+class HoldSubmissionResource extends Resource
 {
 
     protected static ?string $model = OvertimeAssignment::class;
@@ -58,7 +58,7 @@ class OvertimeAssignmentResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery();
+        $query = parent::getEloquentQuery()->where('status', 'waiting');
 
         // Get project ID from multiple sources in order of priority
         $projectId = null;
@@ -169,9 +169,9 @@ class OvertimeAssignmentResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->url(fn($record) => static::getUrl('view', ['record' => $record]))
-                    ->openUrlInNewTab(false),
+                // Tables\Actions\ViewAction::make()
+                //     ->url(fn($record) => static::getUrl('view', ['record' => $record]))
+                //     ->openUrlInNewTab(false),
                 Tables\Actions\DeleteAction::make(),
 
             ])
@@ -192,10 +192,10 @@ class OvertimeAssignmentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOvertimeAssignments::route('/'),
-            'create' => Pages\CreateOvertimeAssignment::route('/create'),
-            'edit' => Pages\EditOvertimeAssignment::route('/{record}/edit'),
-            'view' => Pages\ViewOvertimeAssignment::route('/{record}')
+            'index' => Pages\ListHoldSubmissions::route('/'),
+            'create' => Pages\CreateHoldSubmission::route('/create'),
+            'edit' => Pages\EditHoldSubmission::route('/{record}/edit'),
+            // 'view' => Pages\ViewHoldSubmission::route('/{record}')
         ];
     }
 }

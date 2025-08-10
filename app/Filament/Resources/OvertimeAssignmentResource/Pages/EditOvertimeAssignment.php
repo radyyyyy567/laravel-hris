@@ -11,6 +11,11 @@ class EditOvertimeAssignment extends EditRecord
 {
     protected static string $resource = OvertimeAssignmentResource::class;
 
+ public function getTitle(): string
+    {
+        return 'Edit Pengajuan';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\ManpowerResource\Pages;
+namespace App\Filament\Resources\SpvResource\Pages;
 
-use App\Filament\Resources\ManpowerResource;
+use App\Filament\Resources\SpvResource;
 use App\Models\RelationPlacementUser;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateManpower extends CreateRecord
+class CreateSpv extends CreateRecord
 {
-    protected static string $resource = ManpowerResource::class;
+    protected static string $resource = SpvResource::class;
 
     protected int|string|null $projectId = null;
     protected int|string|null $placementId = null;
@@ -51,7 +51,7 @@ class CreateManpower extends CreateRecord
     protected function afterCreate(): void
     {
         // Create relation to project (manpower)
-        $this->record->manpower()->create([
+        $this->record->pic()->create([
             'project_id' => $this->projectId,
         ]);
 
@@ -62,7 +62,7 @@ class CreateManpower extends CreateRecord
         ]);
 
         // Assign role
-        $this->record->assignRole('man_power');
+        $this->record->assignRole('spv');
     }
 
     protected function getRedirectUrl(): string

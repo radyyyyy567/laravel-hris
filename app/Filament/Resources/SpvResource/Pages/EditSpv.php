@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\ManpowerResource\Pages;
+namespace App\Filament\Resources\SpvResource\Pages;
 
-use App\Filament\Resources\ManpowerResource;
+use App\Filament\Resources\SpvResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Request;
 
-class EditManpower extends EditRecord
+class EditSpv extends EditRecord
 {
-    protected static string $resource = ManpowerResource::class;
+    protected static string $resource = SpvResource::class;
 
     // ✅ Declare both properties here
     public int|string|null $projectId = null;
@@ -19,7 +19,7 @@ class EditManpower extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $this->record->loadMissing([ 'projects', 'placement', 'placementuser']);
+        $this->record->loadMissing([ 'projects', 'placement', 'placementuser', 'pic']);
 
         // ✅ Initialize both properties
         $this->projectId = $GLOBALS['project_global'];
@@ -70,10 +70,11 @@ class EditManpower extends EditRecord
 
     protected function afterSave(): void
     {
-        if ($this->record->manpower()->exists()) {
-    $this->record->manpower()->delete();
+        
+          if ($this->record->pic()->exists()) {
+    $this->record->pic()->delete();
 }
-        $this->record->manpower()->create([
+        $this->record->pic()->create([
             'project_id' => $this->projectId
         ]);
         
@@ -93,13 +94,13 @@ if ($this->record->placementuser()->exists()) {
             DeleteAction::make()
                 ->requiresConfirmation()
                 ->after(function () {
-                    return redirect('/admin/manpowers?project=' . $this->projectId);
+                    return redirect('/admin/spvs?project=' . $this->projectId);
                 }),
         ];
     }
 
     protected function getRedirectUrl(): string
     {
-        return ManpowerResource::getUrl(name: 'index');
+        return SpvResource::getUrl(name: 'index');
     }
 }

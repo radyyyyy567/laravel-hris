@@ -18,13 +18,13 @@ class Settings extends Component
 
     public function mount()
     {
-        $user = User::with(['group.group', 'manpower.project.placement.placement'])->find(auth()->id());
-
+        $user = User::with(['group.group', 'manpower.project.placement.placement', 'placementuser'])->find(auth()->id());
+// dd($user->placementuser->placement->name);
         $this->email = $user->email;
         $this->name = $user->name;
         $this->group_id = $user->group?->group?->id ?? ''; // safe access
         $this->project_name = $user->manpower[0]?->project?->name ?? '';
-        $this->placement = $user->manpower[0]?->project?->placement?->placement?->name ?? '';
+        $this->placement =$user->placementuser?->placement->name ?? '';
         $this->nip = $user->nip;
     }
 

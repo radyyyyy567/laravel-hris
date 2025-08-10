@@ -1,36 +1,36 @@
 <?php
 namespace App\Livewire;
-
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use App\Models\Absence;
 use App\Models\RelationAbsenceManpower;
 use App\Models\ScheduleAbsence;
+use Carbon\Carbon;
+
 class DashboardAbsence extends Component
 {
     public function render()
     {
         $user = Auth::user();
+        if (!$user) {
+            abort(403, 'Unauthorized');
+        }
 
-    if (!$user) {
-        abort(403, 'Unauthorized');
-    }
+        $today = Carbon::now()->setTimezone(config('app.timezone'))->startOfDay();
+        
+        $schedule_today = ScheduleAbsence::whereDate('absence_date', $today)
+            ->whereHas('manpower.user', function ($query) use ($user) {
+                $query->where('email', $user->email);
+            })
+            ->with(['manpower.user'])
+            ->first();
 
-    $schedule_today = ScheduleAbsence::whereDate('absence_date', now())
-    ->whereHas('manpower.user', function ($query) use ($user) {
-        $query->where('email', $user->email);
-    })
-    ->with(['manpower.user'])
-    ->first();
-
-    $absence = Absence::whereDate('absence_date', now())
-    ->whereHas('manpower.user', function ($query) use ($user) {
-        $query->where('email', $user->email);
-    })
-    ->with(['manpower.user'])
-    ->first();
-    
-    
+        $absence = Absence::whereDate('absence_date', $today)
+            ->whereHas('manpower.user', function ($query) use ($user) {
+                $query->where('email', $user->email);
+            })
+            ->with(['manpower.user'])
+            ->first();
 
         return view('livewire.dashboard-absence', [
             'name' => $user->name ?? 'Guest',
@@ -42,12 +42,11 @@ class DashboardAbsence extends Component
     public function submitCheckin($lat = null, $long = null)
     {
         $user = Auth::user();
-        
         if (!$user) {
             abort(403);
         }
 
-        $now = now();
+        $now = Carbon::now()->setTimezone(config('app.timezone'));
         
         $absence = Absence::create([
             'name' => $user->name,
@@ -64,29 +63,31 @@ class DashboardAbsence extends Component
         ]);
 
         session()->flash('message', 'Absensi berhasil disimpan dengan lokasi.');
-        
         // Optionally emit an event to update the UI
         $this->dispatch('absenceSubmitted');
     }
 
     public function submitCheckout($lat = null, $long = null)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
+        $today = Carbon::now()->setTimezone(config('app.timezone'))->startOfDay();
+        
+        // Ambil absen hari ini
+        $absence = Absence::whereDate('absence_date', $today)
+            ->where('name', $user->name)
+            ->first();
 
-    // Ambil absen hari ini
-    $absence = Absence::whereDate('absence_date', now())
-        ->where('name', $user->name)
-        ->first();
+        if (!$absence) {
+            session()->flash('message', 'Data check-in tidak ditemukan.');
+            return;
+        }
 
-    if (!$absence) {
-        session()->flash('message', 'Data check-in tidak ditemukan.');
-        return;
+        $now = Carbon::now()->setTimezone(config('app.timezone'));
+        
+        $absence->update([
+            'checkout_time' => $now->format('H:i:s'),
+        ]);
+
+        session()->flash('message', 'Check-out berhasil.');
     }
-
-    $absence->update([
-        'checkout_time' => now()->format('H:i:s'),
-    ]);
-
-    session()->flash('message', 'Check-out berhasil.');
-}
 }

@@ -1,7 +1,7 @@
 <?php
 namespace App\Filament\Resources;
-use App\Filament\Resources\ManpowerResource\Pages;
-use App\Filament\Resources\ManpowerResource\RelationManagers;
+use App\Filament\Resources\SpvResource\Pages;
+use App\Filament\Resources\SpvResource\RelationManagers;
 use App\Models\Project;
 
 use Spatie\Permission\Models\Role;
@@ -23,22 +23,22 @@ use App\Models\Group;
 use App\Models\Placement;
 use Filament\Forms\Get;
 
-class ManpowerResource extends Resource
+class SpvResource extends Resource
 {
     public static function getBreadcrumb(): string
     {
-        return 'Man Power'; // 👈 replaces "Users" in breadcrumbs
+        return 'Spv'; // 👈 replaces "Users" in breadcrumbs
     }
 
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $model = User::class;
-    protected static ?string $recordTitleAttribute = 'Man power';
+    protected static ?string $recordTitleAttribute = 'Spv';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery()->whereHas('roles', function ($query) {
-            $query->where('name', 'man_power');
+            $query->where('name', 'spv');
         });
 
         // Get project ID from multiple sources in order of priority
@@ -63,12 +63,12 @@ class ManpowerResource extends Resource
         }
 
         // Debug: Log the project ID being used (remove this in production)
-        \Log::info('ManpowerResource Query - Project ID: ' . ($projectId ?? 'null'));
+        \Log::info('SpvResource Query - Project ID: ' . ($projectId ?? 'null'));
 
         // Only filter if a specific project is selected (not "All Projects")
         if ($projectId && $projectId !== '' && $projectId !== null) {
-            $query->whereHas('projects', function ($projectQuery) use ($projectId) {
-                $projectQuery->where('projects.id', $projectId);
+            $query->whereHas('pic.project', function ($projectQuery) use ($projectId) {
+                $projectQuery->where('project_pics.project_id', $projectId);
             });
         }
 
@@ -147,7 +147,7 @@ class ManpowerResource extends Resource
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('email'),
-                TextColumn::make('projects.name')
+                TextColumn::make('pic.project.name')
                     ->label('Projects')
                     ->badge()
                     ->separator(', '),
@@ -179,7 +179,7 @@ class ManpowerResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()
                     // Remove project parameter from URL since we're using global variable
-                    ->url(fn($record) => url('/admin/manpowers/' . $record->id . '/edit')),
+                    ->url(fn($record) => url('/admin/spvs/' . $record->id . '/edit')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -198,9 +198,9 @@ class ManpowerResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListManpowers::route('/'),
-            'create' => Pages\CreateManpower::route('/create'),
-            'edit' => Pages\EditManpower::route('/{record}/edit'),
+            'index' => Pages\ListSpvs::route('/'),
+            'create' => Pages\CreateSpv::route('/create'),
+            'edit' => Pages\EditSpv::route('/{record}/edit'),
         ];
     }
 

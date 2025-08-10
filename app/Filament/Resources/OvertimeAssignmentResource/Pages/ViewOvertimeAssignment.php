@@ -10,11 +10,13 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use App\Models\Notification as Notifications;
 
-
 class ViewOvertimeAssignment extends ViewRecord
 {
     protected static string $resource = OvertimeAssignmentResource::class;
-
+    public function getTitle(): string
+    {
+        return 'Detail Pengajuan';
+    }
     protected function getHeaderActions(): array
     {
         return [
@@ -25,20 +27,39 @@ class ViewOvertimeAssignment extends ViewRecord
                 ->visible(fn() => $this->record->status === 'waiting' && auth()->user()?->can('update_overtime::assignment'))
                 ->requiresConfirmation()
                 ->action(function () {
-                    dd($this->record->projectuser);
+                    // Remove dd() - it stops execution
+        
+
+                    // Check if description exists and is valid JSON
+                    if ($this->record->description && $description = json_decode($this->record->description)) {
+                        if (isset($description->submission_type) && $description->submission_type === 'cuti') {
+                            // Query ScheduleAbsence through the manpower relationship
+                            $records = ScheduleAbsence::with('manpower.user') // eager load manpower and user
+                                ->whereDate('absence_date', '>=', $this->record->start_time)
+                                ->whereDate('absence_date', '<=', $this->record->end_time)
+                                ->whereHas('manpower.user', function ($query) {
+                                $query->where('id', $this->record->projectuser->first()->user_id);})
+                                ->update([
+                                    'status' => $description->submission_type,
+                                ]);
+                            
+
+                            // Log or handle the result instead of dd()
+                            // if ($affectedRows > 0) {
+                            //     \Log::info("Updated {$affectedRows} schedule absence records");
+                            // }
+                        }
+                    }
+
+                    
+
                     $this->record->update(['status' => 'approved']);
+        
                     Notification::make()
                         ->title('Disetujui')
                         ->success()
                         ->body('Lembur berhasil disetujui.')
                         ->send();
-                    $schedule = ScheduleAbsence::whereDate('absence_date', '>=', $this->record->start_time)
-                        ->whereDate('absence_date', '<=', $this->record->end_time)
-                        ->where('user.user.id', $this->record->projectuser->user_id) // Optional: match by user
-                        ->update([
-                        'status' => json_decode($this->record->description)->submission_type, // Example field update
-                        ]);
-                    dd($schedule);
                 }),
 
             Action::make('reject')
@@ -49,6 +70,7 @@ class ViewOvertimeAssignment extends ViewRecord
                 ->requiresConfirmation()
                 ->action(function () {
                     $this->record->update(['status' => 'rejected']);
+
                     Notification::make()
                         ->title('Ditolak')
                         ->success()
@@ -57,5 +79,4 @@ class ViewOvertimeAssignment extends ViewRecord
                 }),
         ];
     }
- 
 }

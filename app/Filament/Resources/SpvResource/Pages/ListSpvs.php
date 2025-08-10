@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Filament\Resources\ManpowerResource\Pages;
+namespace App\Filament\Resources\SpvResource\Pages;
 
-use App\Filament\Resources\ManpowerResource;
-use App\Imports\ManpowerImport;
+
+use App\Filament\Resources\SpvResource;
+
+use App\Imports\SpvImport;
 use Filament\Actions;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
@@ -14,13 +16,13 @@ use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use pxlrbt\FilamentExcel\Columns\Column;
 use Filament\Forms\Components\Actions\Action;
 
-class ListManpowers extends ListRecords
+class ListSpvs extends ListRecords
 {
-    protected static string $resource = ManpowerResource::class;
+    protected static string $resource = SpvResource::class;
 
     public function getTitle(): string
     {
-        return 'Man Power'; // 👈 custom page title
+        return 'Spv'; // 👈 custom page title
     }
 
     protected function getHeaderActions(): array
@@ -28,7 +30,7 @@ class ListManpowers extends ListRecords
         return [
           
             \EightyNine\ExcelImport\ExcelImportAction::make()
-                ->use(ManpowerImport::class)
+                ->use(SpvImport::class)
                 ->sampleExcel(
                     sampleData: [
                         [
@@ -54,7 +56,7 @@ class ListManpowers extends ListRecords
                             
                         ],
                     ],
-                    fileName: 'manpower-sample.xlsx',
+                    fileName: 'spv-sample.xlsx',
                     sampleButtonLabel: 'Download Sample',
                     customiseActionUsing: fn(Action $action) => $action
                         ->color('secondary')
@@ -62,8 +64,8 @@ class ListManpowers extends ListRecords
                         ->requiresConfirmation(),
                 ),
             CreateAction::make()
-                ->label('Tambah Man Power')
-                ->url(fn() => url('/admin/manpowers/create?project=' . Request::get('project')))
+                ->label(label: 'Tambah Spv')
+                ->url(fn() => url('/admin/spvs/create'))
         ];
     }
 }

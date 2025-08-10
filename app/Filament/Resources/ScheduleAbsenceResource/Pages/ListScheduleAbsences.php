@@ -30,8 +30,17 @@ class ListScheduleAbsences extends ListRecords
             ExportAction::make()
                 ->exports([
                     ExcelExport::make()->withColumns([
-                        Column::make('name')->heading('User name'),
-                        Column::make('email')->heading('Email address'),
+                        
+                        Column::make('manpower.user.name')->heading('Nama User'),
+                        Column::make('manpower.user.nip')->heading('NIP'),
+                        Column::make('absence_date')->heading('Tanggal Attendance'),
+                        Column::make('checkin_time')->heading('Jam Masuk'),
+                        Column::make('checkout_time')->heading('Jam Keluar'),
+                        Column::make('long_lat')->heading('Lokasi'),
+                        Column::make('radius')->heading('Radius'),
+                        Column::make('status')->heading('Status'),
+
+
                         Column::make('created_at')->heading('Creation date'),
                     ]),
                 ]),

@@ -11,6 +11,10 @@ class CreateOvertimeAssignment extends CreateRecord
 {
     protected static string $resource = OvertimeAssignmentResource::class;
 
+     public function getTitle(): string
+    {
+        return 'Tambah Pengajuan';
+    }
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $today = now()->toDateString(); // contoh: 2025-06-25

@@ -26,6 +26,44 @@ class NotificationResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static bool $shouldRegisterNavigation = false;
+
+      public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        // Get project ID from multiple sources in order of priority
+        $projectId = null;
+
+        // 1. Check global variable
+        if (isset($GLOBALS['project_global']) && $GLOBALS['project_global'] !== '') {
+            $projectId = $GLOBALS['project_global'];
+        }
+        // 2. Check session as fallback
+        elseif (session()->has('selected_project_id') && session('selected_project_id') !== null) {
+            $projectId = session('selected_project_id');
+            // Also set global variable for consistency
+            $GLOBALS['project_global'] = $projectId;
+        }
+        // 3. Check URL parameter as last resort
+        elseif (request()->has('project') && request()->get('project') !== '') {
+            $projectId = request()->get('project');
+            // Also set global variable and session for consistency
+            $GLOBALS['project_global'] = $projectId;
+            session(['selected_project_id' => $projectId]);
+        }
+
+        // Debug: Log the project ID being used (remove this in production)
+        \Log::info('ScheduleAbsenceResource Query - Project ID: ' . ($projectId ?? 'null'));
+
+        // Only filter if a specific project is selected (not "All Projects")
+        if ($projectId && $projectId !== '' && $projectId !== null) {
+            $query->whereHas('user.user.projects', function ($projectQuery) use ($projectId) {
+                $projectQuery->where('projects.id', $projectId);
+            });
+        }
+
+        return $query;
+    }
     public static function form(Form $form): Form
     {
         return $form

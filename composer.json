@@ -16,7 +16,8 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "pxlrbt/filament-excel": "^2.4"
+        "pxlrbt/filament-excel": "^2.4",
+        "tomatophp/filament-pwa": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

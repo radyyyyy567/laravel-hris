@@ -10,12 +10,15 @@ class ListOvertimeAssignments extends ListRecords
 {
     protected static string $resource = OvertimeAssignmentResource::class;
 
-    
+     public function getTitle(): string
+    {
+        return 'Pengajuan';
+    }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            
         ];
     }
 }

@@ -72,7 +72,7 @@ class ProjectResource extends Resource
                     ->directory('project_logos')
                     ->nullable(),
                 RichEditor::make('description')->columnSpanFull(),
-                TextInput::make('status'),
+                
                 
             
             ]);

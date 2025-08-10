@@ -30,6 +30,7 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'password',
         'nip',
+        'description'
     ];
 
     /**
@@ -78,6 +79,10 @@ public function group()
     public function absence()
     {
         return $this->hasMany(RelationAbsenceManpower::class);
+    }
+
+    public function placementuser () {
+        return $this->hasOne(RelationPlacementUser::class);
     }
 
         public function placement()

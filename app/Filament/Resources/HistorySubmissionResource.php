@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\OvertimeAssignmentResource\Pages;
-use App\Filament\Resources\OvertimeAssignmentResource\RelationManagers;
+use App\Filament\Resources\HistorySubmissionResource\Pages;
+use App\Filament\Resources\HistorySubmissionResource\RelationManagers;
 use App\Models\OvertimeAssignment;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class OvertimeAssignmentResource extends Resource
+class HistorySubmissionResource extends Resource
 {
 
     protected static ?string $model = OvertimeAssignment::class;
@@ -58,7 +58,7 @@ class OvertimeAssignmentResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery();
+        $query = parent::getEloquentQuery()->where('status', '!=', 'waiting');
 
         // Get project ID from multiple sources in order of priority
         $projectId = null;
@@ -85,11 +85,12 @@ class OvertimeAssignmentResource extends Resource
         \Log::info('Submission Query - Project ID: ' . ($projectId ?? 'null'));
 
         // Only filter if a specific project is selected (not "All Projects")
-        if ($projectId && $projectId !== '' && $projectId !== null) {
-            $query->whereHas('projectuser.user.projects', function ($projectQuery) use ($projectId) {
-                $projectQuery->where('projects.id', $projectId);
-            });
-        }
+       if ($projectId && $projectId !== '' && $projectId !== null) {
+     $query->where('status', '!=', 'waiting') // exclude waiting
+          ->whereHas('projectuser.user.projects', function ($projectQuery) use ($projectId) {
+              $projectQuery->where('projects.id', $projectId);
+          });
+}
 
         return $query;
     }
@@ -169,9 +170,13 @@ class OvertimeAssignmentResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->url(fn($record) => static::getUrl('view', ['record' => $record]))
-                    ->openUrlInNewTab(false),
+               Tables\Actions\Action::make('view')
+    ->label('View')
+    ->icon('heroicon-s-eye') // 👁 Eye icon
+    ->color('gray-700') // same color as default ViewAction
+    ->url(fn ($record) => "/admin/overtime-assignments/{$record->id}")
+    ->openUrlInNewTab(false)
+,
                 Tables\Actions\DeleteAction::make(),
 
             ])
@@ -192,10 +197,10 @@ class OvertimeAssignmentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOvertimeAssignments::route('/'),
-            'create' => Pages\CreateOvertimeAssignment::route('/create'),
-            'edit' => Pages\EditOvertimeAssignment::route('/{record}/edit'),
-            'view' => Pages\ViewOvertimeAssignment::route('/{record}')
+            'index' => Pages\ListHistorySubmissions::route('/'),
+            'create' => Pages\CreateHistorySubmission::route('/create'),
+            'edit' => Pages\EditHistorySubmission::route('/{record}/edit'),
+            
         ];
     }
 }

@@ -30,6 +30,9 @@ class RecapAbsenceResource extends Resource
         return 'Rekap Absensi';
     }
 
+    
+
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -121,6 +124,8 @@ class RecapAbsenceResource extends Resource
                     ->date('d/m/Y')
                     ->sortable(),
 
+
+                
                 TextColumn::make('checkin_time')
                     ->label('Jam Masuk')
                     ->time('H:i')
@@ -129,6 +134,10 @@ class RecapAbsenceResource extends Resource
                 TextColumn::make('checkout_time')
                     ->label('Jam Keluar')
                     ->time('H:i')
+                    ->sortable(),
+                TextColumn::make('manpower.user.projects.name')
+                    ->label('Proyek')
+                    
                     ->sortable(),
 
                 TextColumn::make('status')
@@ -200,11 +209,11 @@ class RecapAbsenceResource extends Resource
 
                 SelectFilter::make('status')
                     ->options([
-                        'present' => 'Hadir',
-                        'izin' => 'Izin',
-                        'sakit' => 'Sakit',
-                        'alpha' => 'Alpha',
-                        'dinas_luar' => 'Dinas Luar',
+                        'Tepat Waktu' => 'Tepat Waktu',
+                        'Datang Terlambat' => 'Datang Terlambat',
+                        'Tidak Clock Out' => 'Tidak Clock Out',
+                        // 'Tidak Absen' => 'Alpha',
+                        'pendis' => 'Dinas Luar',
                     ])
                     ->label('Status Kehadiran')
                     ->multiple(),

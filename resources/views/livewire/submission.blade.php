@@ -18,6 +18,8 @@
                 class="px-[15px] py-[15px] w-full bg-[#F2F2F2] border-none placeholder:text-sm rounded-[5px] placeholder:text-[#D0D0D0]">
                 <option value="overtime">Overtime</option>
                 <option value="cuti">Cuti</option>
+                <option value="sakit">Sakit</option>
+                <option value="perdin">Perdin</option>
             </select>
             @error('submission_type')
                 <span class="text-red-500 text-sm animate-shake">{{ $message }}</span>
@@ -150,23 +152,25 @@
                             </div>
                         </div>
                         <input type="file" wire:model="evidence" class="absolute inset-0 opacity-0 cursor-pointer"
-                            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
+                            accept=".jpg,.jpeg,.webp,.png,.mp4,.heic,.m4a,.wav" />
                     </label>
                     @error('evidence')
                         <span class="text-red-500 text-sm animate-shake">{{ $message }}</span>
                     @enderror
                 </div>
-                <div class="mb-6 form-group mt-[10px]">
-                    <label class="block text-sm font-medium text-[#555] mb-2">Jenis Pengajuan</label>
-                    <select wire:model.live="cuti_type"
-                        class="px-[15px] py-[15px] w-full bg-[#F2F2F2] border-none placeholder:text-sm rounded-[5px] placeholder:text-[#D0D0D0]">
-                        <option value="tahunan">Cuti Tahunan</option>
-                        <option value="nasional">Cuti Nasional</option>
-                    </select>
-                    @error('cuti_type')
-                        <span class="text-red-500 text-sm animate-shake">{{ $message }}</span>
-                    @enderror
-                </div>
+                @if($submission_type === 'cuti')
+                    <div class="mb-6 form-group mt-[10px]">
+                        <label class="block text-sm font-medium text-[#555] mb-2">Jenis Pengajuan</label>
+                        <select wire:model.live="cuti_type"
+                            class="px-[15px] py-[15px] w-full bg-[#F2F2F2] border-none placeholder:text-sm rounded-[5px] placeholder:text-[#D0D0D0]">
+                            <option value="tahunan">Cuti Tahunan</option>
+                            <option value="nasional">Cuti Nasional</option>
+                        </select>
+                        @error('cuti_type')
+                            <span class="text-red-500 text-sm animate-shake">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @endif
                 <!-- Policy Agreement -->
                 <div class="flex items-start space-x-2 form-group">
                     <input type="checkbox" wire:model="agreed_to_policy" id="policy"
@@ -219,7 +223,7 @@
                 <button type="submit" id="submitOvertimeBtn"
                     class="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium hover:scale-105 btn-ripple submit-btn">
                     <span class="btn-text">Kirim</span>
-                    <span class="btn-loading  flex items-center justify-center">
+                    <span class="btn-loading hidden flex items-center justify-center">
                         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg"
                             fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -301,7 +305,7 @@
                     <!-- Description -->
                     <div class="form-group">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
-                        <textarea wire:model="description" placeholder="Masukan deskripsi overtime" rows="3"
+                        <textarea wire:model="modal_description" placeholder="Masukan deskripsi overtime" rows="3"
                             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 transition-all duration-300 resize-none"></textarea>
                     </div>
 
@@ -311,10 +315,10 @@
 
                     <!-- Time Range -->
                     <div class="grid grid-cols-2 gap-4">
-                        
+
                         <!-- Date -->
                         <div class="form-group">
-                            <label class="block text-sm font-medium text-[#555] mb-2">Tanggal Pengajuan</label>
+                            <label class="block text-sm font-medium text-[#555] mb-2">Tanggal Overtime</label>
                             <div class="relative">
                                 <input type="date" wire:model="modal_date" id="modal_date"
                                     class="px-[15px] py-[15px] w-full bg-[#F2F2F2] border-none text-sm rounded-[5px] text-[#555] focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none date-input"
@@ -348,8 +352,9 @@
                                         <x-phosphor-folder-open-bold class="h-4 w-4 text-[#418CED]" />
                                     </div>
                                 </div>
-                                <input type="file" wire:model="modal_evidence" class="absolute inset-0 opacity-0 cursor-pointer"
-                                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
+                                <input type="file" wire:model="modal_evidence"
+                                    class="absolute inset-0 opacity-0 cursor-pointer"
+                                    accept=".jpg,.jpeg,.webp,.png,.mp4,.heic,.m4a,.wav" />
                             </label>
                             @error('evidence')
                                 <span class="text-red-500 text-sm animate-shake">{{ $message }}</span>
@@ -402,7 +407,7 @@
                         <button type="submit" id="saveOvertimeBtn"
                             class="flex-1 py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all duration-200 hover:scale-105 btn-ripple submit-btn">
                             <span class="btn-text">Simpan</span>
-                            <span  class="btn-loading flex   items-center justify-center">
+                            <span class="btn-loading flex  hidden items-center justify-center">
                                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline"
                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -545,12 +550,12 @@
         }
 
         /* 
-                    .form-group input:focus,
-                    .form-group select:focus,
-                    .form-group textarea:focus {
-                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-                        transform: scale(1.02);
-                    } */
+                            .form-group input:focus,
+                            .form-group select:focus,
+                            .form-group textarea:focus {
+                                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                                transform: scale(1.02);
+                            } */
 
         /* Button Enhancements */
         .btn-ripple {
@@ -827,17 +832,17 @@
                 const y = event.clientY - rect.top - size / 2;
 
                 ripple.style.cssText = `
-                                position: absolute;
-                                width: ${size}px;
-                                height: ${size}px;
-                                background: rgba(255, 255, 255, 0.6);
-                                border-radius: 50%;
-                                left: ${x}px;
-                                top: ${y}px;
-                                animation: ripple 0.6s linear;
-                                pointer-events: none;
-                                z-index: 1;
-                            `;
+                                        position: absolute;
+                                        width: ${size}px;
+                                        height: ${size}px;
+                                        background: rgba(255, 255, 255, 0.6);
+                                        border-radius: 50%;
+                                        left: ${x}px;
+                                        top: ${y}px;
+                                        animation: ripple 0.6s linear;
+                                        pointer-events: none;
+                                        z-index: 1;
+                                    `;
 
                 button.appendChild(ripple);
 
@@ -940,7 +945,7 @@
         function handleFileUpload(input) {
             const file = input.files[0];
             if (file) {
-                if (file.size > 10 * 1024 * 1024) { // 10MB
+                if (file.size > 12 * 1024 * 1024) { // 10MB
                     alert('File terlalu besar. Maksimal 10MB.');
                     input.value = '';
                     return;
@@ -983,15 +988,15 @@
 
             const style = document.createElement('style');
             style.textContent = `
-                            .touch-device button:hover {
-                                transform: none;
-                                box-shadow: none;
-                            }
-                            .touch-device .overtime-entry:hover {
-                                transform: none;
-                                box-shadow: none;
-                            }
-                        `;
+                                    .touch-device button:hover {
+                                        transform: none;
+                                        box-shadow: none;
+                                    }
+                                    .touch-device .overtime-entry:hover {
+                                        transform: none;
+                                        box-shadow: none;
+                                    }
+                                `;
             document.head.appendChild(style);
         }
     </script>

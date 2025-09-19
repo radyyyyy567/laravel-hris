@@ -97,8 +97,8 @@ class NotificationResource extends Resource
         return $table
             ->columns([
                 //
-                TextColumn::make("title")->label('Judul'),
-                TextColumn::make("user.user.name")->label('Dikirim ke'),
+                TextColumn::make("title")->label('Judul')->searchable(),
+                TextColumn::make("user.user.name")->label('Dikirim ke')->searchable(),
                 TextColumn::make("description")->label('Pesan'),
                 TextColumn::make('type')
     ->label('Kategori')

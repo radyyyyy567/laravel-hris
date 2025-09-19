@@ -87,9 +87,9 @@ class ProjectResource extends Resource
 
             ->columns([
                 //
-                TextColumn::make('name'),
+                TextColumn::make('name')->searchable(),
                 TextColumn::make('description')->html(),
-                TextColumn::make('status'),
+                TextColumn::make('status')->searchable(),
                 ImageColumn::make('logo')->label('Logo'),
             ])
             ->filters([

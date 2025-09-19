@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ScheduleAbsenceResource\Pages;
 
 use App\Filament\Resources\ScheduleAbsenceResource;
+use Carbon\Carbon;
 use App\Imports\ScheduleAbsenceImport;
 use Filament\Actions;
 use Filament\Actions\CreateAction;
@@ -30,10 +31,10 @@ class ListScheduleAbsences extends ListRecords
             ExportAction::make()
                 ->exports([
                     ExcelExport::make()->withColumns([
-                        
+
                         Column::make('manpower.user.name')->heading('Nama User'),
                         Column::make('manpower.user.nip')->heading('NIP'),
-                        Column::make('absence_date')->heading('Tanggal Attendance'),
+                        Column::make('absence_date')->heading('Tanggal Attendance')->formatStateUsing(fn($state) => Carbon::parse($state)->format('d-m-Y')),
                         Column::make('checkin_time')->heading('Jam Masuk'),
                         Column::make('checkout_time')->heading('Jam Keluar'),
                         Column::make('long_lat')->heading('Lokasi'),
@@ -44,46 +45,46 @@ class ListScheduleAbsences extends ListRecords
                         Column::make('created_at')->heading('Creation date'),
                     ]),
                 ]),
-                \EightyNine\ExcelImport\ExcelImportAction::make()
-    ->use(ScheduleAbsenceImport::class)
-    ->sampleExcel(
-        sampleData: [
-            [
-                'name' => 'Katrina',
-                'nip' => '1234',
-                'absence_date' => '2025-08-01 00:00:00',
-                'checkin_time' => '08:00:00',
-                'checkout_time' => '17:00:00',
-                'description' => 'Pekerja',
-                'radius' => 100,
-                'long_lat' => '123.456,-76.543',
-                'status' => 'biasa',
-            ],
-            [
-                'name' => 'Katrina',
-                'nip' => '1234',
-                'absence_date' => '2025-08-02 00:00:00',
-                'checkin_time' => '09:00:00',
-                'checkout_time' => '18:00:00',
-                'description' => 'Pekerja',
-                'radius' => 150,
-                'long_lat' => '124.321,-75.432',
-                'status' => 'dinas_luar',
-            ],
-        ],
-        fileName: 'schedule-absence-sample.xlsx',
-        sampleButtonLabel: 'Download Sample',
-        customiseActionUsing: fn(Action $action) => $action
-            ->color('secondary')
-            ->icon('heroicon-m-calendar')
-            ->requiresConfirmation(),
-    ),
+            \EightyNine\ExcelImport\ExcelImportAction::make()
+                ->use(ScheduleAbsenceImport::class)
+                ->sampleExcel(
+                    sampleData: [
+                        [
+                            'name' => 'Katrina',
+                            'nip' => '1234',
+                            'absence_date' => '2025-08-01 00:00:00',
+                            'checkin_time' => '08:00:00',
+                            'checkout_time' => '17:00:00',
+                            'description' => 'Pekerja',
+                            'radius' => 100,
+                            'long_lat' => '123.456,-76.543',
+                            'status' => 'biasa',
+                        ],
+                        [
+                            'name' => 'Katrina',
+                            'nip' => '1234',
+                            'absence_date' => '2025-08-02 00:00:00',
+                            'checkin_time' => '09:00:00',
+                            'checkout_time' => '18:00:00',
+                            'description' => 'Pekerja',
+                            'radius' => 150,
+                            'long_lat' => '124.321,-75.432',
+                            'status' => 'dinas_luar',
+                        ],
+                    ],
+                    fileName: 'schedule-absence-sample.xlsx',
+                    sampleButtonLabel: 'Download Sample',
+                    customiseActionUsing: fn(Action $action) => $action
+                        ->color('secondary')
+                        ->icon('heroicon-m-calendar')
+                        ->requiresConfirmation(),
+                ),
             CreateAction::make()
-    ->label('Tambah Jadwal Attendance')
-    ->url(fn () => url('/admin/schedule-absences/create?project=' . Request::get('project')))
+                ->label('Tambah Jadwal Attendance')
+                ->url(fn() => url('/admin/schedule-absences/create?project=' . Request::get('project')))
         ];
     }
-    
+
     // ✅ Move import action to table actions instead
     protected function getTableActions(): array
     {

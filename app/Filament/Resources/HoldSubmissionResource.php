@@ -140,8 +140,8 @@ class HoldSubmissionResource extends Resource
         return $table
             ->columns([
                 //
-                TextColumn::make('name'),
-                TextColumn::make('projectuser.user.name'),
+                TextColumn::make('name')->searchable(),
+                TextColumn::make('projectuser.user.name')->searchable(),
                 TextColumn::make('submission_date')->dateTime(),
                 TextColumn::make('start_time')->dateTime(),
                 TextColumn::make('end_time')->dateTime(),
@@ -169,15 +169,18 @@ class HoldSubmissionResource extends Resource
                 //
             ])
             ->actions([
-                // Tables\Actions\ViewAction::make()
-                //     ->url(fn($record) => static::getUrl('view', ['record' => $record]))
-                //     ->openUrlInNewTab(false),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('view')
+                    ->label('View')
+                    ->icon('heroicon-s-eye') // 👁 Eye icon
+                    ->color('gray-600') // same color as default ViewAction
+                    ->url(fn($record) => "/admin/overtime-assignments/{$record->id}")
+                    ->openUrlInNewTab(false),
+                
 
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    
                 ]),
             ]);
     }

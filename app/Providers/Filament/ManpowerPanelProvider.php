@@ -55,6 +55,6 @@ class ManpowerPanelProvider extends PanelProvider
             ->navigation(false)
             ->authMiddleware([
                 Authenticate::class,
-            ])->viteTheme('resources/css/filament/admin/theme.css');
+            ])->viteTheme('resources/css/filament/admin/theme.css')->plugin(\TomatoPHP\FilamentPWA\FilamentPWAPlugin::make());
     }
 }

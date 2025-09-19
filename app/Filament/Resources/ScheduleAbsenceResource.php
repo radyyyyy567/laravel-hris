@@ -81,18 +81,9 @@ class ScheduleAbsenceResource extends Resource
                 Select::make('manpower_id')
                     ->label('Pilih Man Power')
                     ->options(function (callable $get) {
-                        $projectId = $get('project') ?? request()->get('project');
                         
-                        if (!$projectId) {
-                            return [];
-                        }
-
-                        return Manpower::whereHas('user.projects', function ($query) use ($projectId) {
-                                $query->where('projects.id', $projectId);
-                            })
-                            ->with('user')
-                            ->get()
-                            ->pluck('user.name', 'id');
+                        return user::get()
+                            ->pluck('name', 'id');
                     })
                     ->searchable()
                     ->required()
@@ -115,9 +106,7 @@ class ScheduleAbsenceResource extends Resource
                     ->label('Jam Keluar')
                     ->required(),
 
-                TextInput::make('description')
-                    ->label('Keterangan')
-                    ->required(),
+                
 
                 Select::make('status')
                     ->label('Status')
@@ -137,14 +126,29 @@ class ScheduleAbsenceResource extends Resource
                     ->default(100)
                     ->required(),
 
+                TextInput::make('coordinates')
+                    ->label('Koordinat (Lat,Lng)')
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        if (strpos($state, ',') !== false) {
+                            [$lat, $lng] = array_map('trim', explode(',', $state));
+                            $set('input_long_lat', [
+                                'lat' => (float) $lat,
+                                'lng' => (float) $lng,
+                            ]);
+                        }
+                    }),
+
                 Map::make('input_long_lat')
                     ->label('Lokasi')
-                    ->default(['lat' => -6.2088, 'lng' => 106.8456]) // Jakarta default
+                    ->default(['lat' => -6.2088, 'lng' => 106.8456])
                     ->defaultLocation(latitude: -6.2088, longitude: 106.8456)
                     ->showMarker(true)
                     ->clickable(true)
                     ->zoom(12)
-                    ->required(),
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        $set('coordinates', $state['lat'] . ',' . $state['lng']);
+                    }),
             ]);
     }
 

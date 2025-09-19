@@ -20,6 +20,8 @@ public function getTitle(): string
             // Assuming ['lat' => ..., 'lng' => ...]
             $data['long_lat'] = $data['long_lat']['lat'] . ',' . $data['long_lat']['lng'];
         }
+        
+        unset($data['manpower_user_id']);
         return $data;
     }
     protected function getHeaderActions(): array

@@ -224,7 +224,7 @@
         [
             'label' => 'Attendance',
             'collapsible' => true,
-            'defaultOpen' => true,
+            'defaultOpen' => false,
             'icon' => 'heroicon-o-cog-6-tooth',
             'allowedRoles' => ['super_admin', 'admin', 'spv'],
             'items' => [
@@ -260,7 +260,7 @@
         [
             'label' => 'Pengajuan',
             'collapsible' => true,
-            'defaultOpen' => true,
+            'defaultOpen' => false,
             'icon' => 'heroicon-o-cog-6-tooth',
             'allowedRoles' => ['super_admin', 'admin', 'spv'],
             'items' => [
@@ -337,6 +337,7 @@
                 ],
             ]
         ],
+       
         [
             'label' => null,
             'collapsible' => false,
@@ -371,7 +372,23 @@
                 ],
             ]
         ],
-       
+         [
+            'label' => null,
+            'collapsible' => false,
+            'defaultOpen' => true,
+            'allowedRoles' => ['super_admin'],
+            'items' => [
+                [
+                    'name' => 'Admin',
+                    'route' => 'filament.admin.resources.users.index',
+                    'icon' => 'heroicon-o-user',
+                    'badge' => null,
+                    'activeOn' => ['filament.admin.resources.users.*'],
+                    'allowedRoles' => ['super_admin',],
+                    'requiresProject' => false,
+                ],
+            ]
+        ],
     ];
     
     // Filter navigation groups based on user role

@@ -145,21 +145,21 @@ class SpvResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('email'),
-                TextColumn::make('pic.project.name')
+                TextColumn::make('name')->searchable(),
+                TextColumn::make('email')->searchable(),
+                TextColumn::make('pic.project.name')->searchable()
                     ->label('Projects')
                     ->badge()
                     ->separator(', '),
-                TextColumn::make('group')
+                TextColumn::make('group')->searchable()
                     ->label('Group')
                     ->getStateUsing(fn($record) => json_decode($record->description, true)['group'] ?? 'N/A'),
 
-                TextColumn::make('notelp')
+                TextColumn::make('notelp')->searchable()
                     ->label('Phone')
                     ->getStateUsing(fn($record) => json_decode($record->description, true)['notelp'] ?? 'N/A'),
 
-                TextColumn::make('gender')
+                TextColumn::make('gender')->searchable()
                     ->label('Gender')
                     ->getStateUsing(function ($record) {
                         $gender = json_decode($record->description, true)['gender'] ?? null;

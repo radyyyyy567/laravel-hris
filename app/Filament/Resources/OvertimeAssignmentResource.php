@@ -58,7 +58,7 @@ class OvertimeAssignmentResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery();
+        $query = parent::getEloquentQuery()->with(['projectuser.user', 'projectuser.user.projects']);
 
         // Get project ID from multiple sources in order of priority
         $projectId = null;
@@ -138,14 +138,15 @@ class OvertimeAssignmentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc') // newest → oldest
             ->columns([
                 //
-                TextColumn::make('name'),
-                TextColumn::make('projectuser.user.name'),
+                TextColumn::make('name')->searchable(),
+                TextColumn::make('projectuser.user.name')->searchable(),
                 TextColumn::make('submission_date')->dateTime(),
                 TextColumn::make('start_time')->dateTime(),
                 TextColumn::make('end_time')->dateTime(),
-                TextColumn::make('submission_type')
+                TextColumn::make('submission_type')->searchable()
                     ->label('Tipe Pengajuan')
                     ->getStateUsing(fn($record) => json_decode($record->description, true)['submission_type'] ?? 'N/A'),
                 ImageColumn::make('evidence')
@@ -163,7 +164,9 @@ class OvertimeAssignmentResource extends Resource
                         'rejected' => 'danger',
                         'waiting' => 'warning',
                         default => 'gray',
-                    })
+                    }),
+                TextColumn::make('projectuser.user.projects.name')->searchable(),
+                    
             ])
             ->filters([
                 //
@@ -172,13 +175,11 @@ class OvertimeAssignmentResource extends Resource
                 Tables\Actions\ViewAction::make()
                     ->url(fn($record) => static::getUrl('view', ['record' => $record]))
                     ->openUrlInNewTab(false),
-                Tables\Actions\DeleteAction::make(),
+
 
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 

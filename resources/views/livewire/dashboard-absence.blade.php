@@ -131,6 +131,7 @@
             <div class="text-sm text-[#555] mb-2">
                 Action
             </div>
+          
             @if ($absence?->checkin_time && $absence?->checkout_time)
                 <div class="text-sm text-gray-500 mb-4">
                     Anda sudah melakukan Check-in dan Check-out hari ini.
@@ -212,184 +213,192 @@
     </style>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        const isCheckin = "{{ $absence?->checkin_time && !$absence?->checkout_time ? '0' : '1' }}";
-        const scheduleLocation = "{{ $schedule_today?->long_lat ?? '' }}";
-        const hasSchedule = "{{ $schedule_today ? '1' : '0' }}";
+<script>
+    const isCheckin = "{{ $absence?->checkin_time && !$absence?->checkout_time ? '0' : '1' }}";
+    const scheduleLocation = "{{ $schedule_today?->long_lat ?? '' }}";
+    const hasSchedule = "{{ $schedule_today ? '1' : '0' }}";
+    const scheduleStatus = "{{ strtolower($schedule_today?->status ?? '') }}"; // kirim status jadwal ke JS
 
-        let distanceFromSchedule = null;
+    let distanceFromSchedule = null;
 
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3;
-            const φ1 = lat1 * Math.PI / 180;
-            const φ2 = lat2 * Math.PI / 180;
-            const Δφ = (lat2 - lat1) * Math.PI / 180;
-            const Δλ = (lon2 - lon1) * Math.PI / 180;
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371e3;
+        const φ1 = lat1 * Math.PI / 180;
+        const φ2 = lat2 * Math.PI / 180;
+        const Δφ = (lat2 - lat1) * Math.PI / 180;
+        const Δλ = (lon2 - lon1) * Math.PI / 180;
 
-            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                Math.cos(φ1) * Math.cos(φ2) *
-                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-            return R * c;
+        return R * c;
+    }
+
+    function showGpsStatus(message, type = 'info') {
+        const $status = $('#gpsStatus');
+        const $message = $('#gpsMessage');
+
+        $status.removeClass().addClass('border px-4 py-2 mt-2');
+
+        switch (type) {
+            case 'success': $status.addClass('bg-green-100 border-green-400 text-green-700'); break;
+            case 'error': $status.addClass('bg-red-100 border-red-400 text-red-700'); break;
+            case 'warning': $status.addClass('bg-yellow-100 border-yellow-400 text-yellow-700'); break;
+            default: $status.addClass('bg-blue-100 border-blue-400 text-blue-700');
         }
 
-        function showGpsStatus(message, type = 'info') {
-            const $status = $('#gpsStatus');
-            const $message = $('#gpsMessage');
+        $message.text(message);
+        $status.removeClass('hidden');
+    }
 
-            $status.removeClass().addClass('border px-4 py-2 mt-2');
-
-            switch (type) {
-                case 'success': $status.addClass('bg-green-100 border-green-400 text-green-700'); break;
-                case 'error': $status.addClass('bg-red-100 border-red-400 text-red-700'); break;
-                case 'warning': $status.addClass('bg-yellow-100 border-yellow-400 text-yellow-700'); break;
-                default: $status.addClass('bg-blue-100 border-blue-400 text-blue-700');
+    function requestLocationAndSubmit() {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                showGpsStatus('❌ GPS tidak didukung oleh browser ini', 'error');
+                reject(new Error('Geolocation not supported'));
+                return;
             }
 
-            $message.text(message);
-            $status.removeClass('hidden');
-        }
-function requestLocationAndSubmit() {
-    return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-            showGpsStatus('❌ GPS tidak didukung oleh browser ini', 'error');
-            reject(new Error('Geolocation not supported'));
-            return;
-        }
+            showGpsStatus('📍 Meminta akses lokasi...', 'info');
+            $('#locationText').removeClass('hidden').addClass('pulse');
+            $('#defaultText').addClass('hidden');
 
-        showGpsStatus('📍 Meminta akses lokasi...', 'info');
-        $('#locationText').removeClass('hidden').addClass('pulse');
-        $('#defaultText').addClass('hidden');
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    try {
+                        $('#locationText').addClass('hidden').removeClass('pulse');
+                        $('#defaultText').removeClass('hidden');
 
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                try {
+                        let allowed = true;
+
+                        // Hanya cek radius kalau status bukan perdin
+                        if (scheduleStatus !== 'perdin' && hasSchedule === '1' && scheduleLocation) {
+                            const scheduleLoc = scheduleLocation.split(',');
+                            if (scheduleLoc.length === 2) {
+                                const scheduleLat = parseFloat(scheduleLoc[0]);
+                                const scheduleLng = parseFloat(scheduleLoc[1]);
+                                const userLat = position.coords.latitude;
+                                const userLng = position.coords.longitude;
+
+                                distanceFromSchedule = calculateDistance(userLat, userLng, scheduleLat, scheduleLng);
+                                console.log(`Distance: ${distanceFromSchedule.toFixed(2)} meters`);
+
+                                if (distanceFromSchedule > 100) {
+                                    $('#sliderLabel').text(' Kamu diluar wilayah absen');
+                                    allowed = false;
+                                    reject(new Error('Outside allowed area'));
+                                    return;
+                                } else {
+                                    showGpsStatus(`✅ Lokasi OK (${distanceFromSchedule.toFixed(0)}m)`, 'success');
+                                }
+                            }
+                        }
+
+                        if (allowed) {
+                            const lat = position.coords.latitude;
+                            const long = position.coords.longitude;
+
+                            if (isCheckin === '1') {
+                                await @this.call('submitCheckin', lat, long);
+                            } else {
+                                await @this.call('submitCheckout', lat, long);
+                            }
+                            resolve();
+                        }
+                    } catch (error) {
+                        reject(error);
+                    }
+                },
+                (error) => {
                     $('#locationText').addClass('hidden').removeClass('pulse');
                     $('#defaultText').removeClass('hidden');
 
-                    let allowed = true;
-
-                    if (hasSchedule === '1' && scheduleLocation) {
-                        const scheduleLoc = scheduleLocation.split(',');
-                        if (scheduleLoc.length === 2) {
-                            const scheduleLat = parseFloat(scheduleLoc[0]);
-                            const scheduleLng = parseFloat(scheduleLoc[1]);
-                            const userLat = position.coords.latitude;
-                            const userLng = position.coords.longitude;
-
-                            distanceFromSchedule = calculateDistance(userLat, userLng, scheduleLat, scheduleLng);
-                            console.log(`Distance: ${distanceFromSchedule.toFixed(2)} meters`);
-
-                            if (distanceFromSchedule > 100) {
-                                $('#sliderLabel').text(' Kamu diluar wilayah absen');
-                                allowed = false;
-                                reject(new Error('Outside allowed area'));
-                                return;
-                            } else {
-                                showGpsStatus(`✅ Lokasi OK (${distanceFromSchedule.toFixed(0)}m)`, 'success');
-                            }
-                        }
+                    let errorMessage = 'Error mengambil lokasi';
+                    if (error.code === error.PERMISSION_DENIED) {
+                        errorMessage = '❌ Akses ditolak';
+                    } else if (error.code === error.POSITION_UNAVAILABLE) {
+                        errorMessage = '❌ Posisi tidak tersedia';
+                    } else if (error.code === error.TIMEOUT) {
+                        errorMessage = '❌ Waktu habis mengambil lokasi';
                     }
 
-                    if (allowed) {
-                        const lat = position.coords.latitude;
-                        const long = position.coords.longitude;
-                        
-                        // Wait for Livewire call to complete
-                        if (isCheckin === '1') {
-                            await @this.call('submitCheckin', lat, long);
-                        } else {
-                            await @this.call('submitCheckout', lat, long);
-                        }
-                        resolve(); // Only resolve after everything completes
-                    }
-                } catch (error) {
-                    reject(error);
+                    $('#sliderLabel').text(errorMessage);
+                    showGpsStatus(errorMessage, 'error');
+                    resetSlider();
+                    reject(new Error(errorMessage));
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
                 }
-            },
-            (error) => {
-                $('#locationText').addClass('hidden').removeClass('pulse');
-                $('#defaultText').removeClass('hidden');
+            );
+        });
+    }
 
-                let errorMessage = 'Error mengambil lokasi';
-                if (error.code === error.PERMISSION_DENIED) {
-                    errorMessage = '❌ Akses ditolak';
-                } else if (error.code === error.POSITION_UNAVAILABLE) {
-                    errorMessage = '❌ Posisi tidak tersedia';
-                } else if (error.code === error.TIMEOUT) {
-                    errorMessage = '❌ Waktu habis mengambil lokasi';
-                }
+    function resetSlider() {
+        const $btn = $('#sliderBtn');
+        $btn.css('transform', `translateX(0px)`);
+    }
 
-                $('#sliderLabel').text(errorMessage);
-                showGpsStatus(errorMessage, 'error');
-                resetSlider();
-                reject(new Error(errorMessage));
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
-        );
-    });
-}
+    $(function () {
+        const $btn = $('#sliderBtn');
+        const $track = $('#sliderTrack');
 
-        function resetSlider() {
-            const $btn = $('#sliderBtn');
-            $btn.css('transform', `translateX(0px)`);
+        // Nonaktifkan slider kalau status bukan biasa/normal
+        if (scheduleStatus !== 'biasa' && scheduleStatus !== 'normal' && scheduleStatus !== 'perdin') {
+            $btn.css('pointer-events', 'none').css('opacity', 0.5);
+            $('#sliderLabel').text('⏸️ Absen nonaktif untuk status ini');
+            return;
         }
 
-        $(function () {
-            const $btn = $('#sliderBtn');
-            const $track = $('#sliderTrack');
+        if ($track.length === 0) return;
 
-            if ($track.length === 0) return;
+        const maxDrag = $track.width() - $btn.outerWidth(true) - 4;
+        let isDragging = false;
+        let startX = 0;
 
-            const maxDrag = $track.width() - $btn.outerWidth(true) - 4;
-            let isDragging = false;
-            let startX = 0;
-
-            $btn.on('mousedown touchstart', function (e) {
-                isDragging = true;
-                startX = e.pageX || e.originalEvent.touches[0].pageX;
-                e.preventDefault();
-            });
-
-            $(document).on('mousemove touchmove', function (e) {
-                if (!isDragging) return;
-
-                const moveX = e.pageX || e.originalEvent.touches[0].pageX;
-                let diff = moveX - startX;
-                diff = Math.max(0, Math.min(diff, maxDrag));
-                $btn.css('transform', `translateX(${diff}px)`);
-                e.preventDefault();
-            });
-
-            $(document).on('mouseup touchend', async function () {
-                if (!isDragging) return;
-                isDragging = false;
-
-                const currentLeft = $btn.offset().left - $track.offset().left;
-                if (currentLeft >= maxDrag - 10) {
-                    await requestLocationAndSubmit();
-
-                    $btn.css('transform', `translateX(${maxDrag}px)`);
-
-                    setTimeout(() => {
-        window.location.href = '/manpower/dashboard-absence';
-    }, 1000);
-
-                } else {
-                    resetSlider();
-                }
-            });
-
-            Livewire.on('absenceSubmitted', () => {
-                console.log('Absence submitted');
-                $('#gpsStatus').addClass('hidden');
-            });
+        $btn.on('mousedown touchstart', function (e) {
+            isDragging = true;
+            startX = e.pageX || e.originalEvent.touches[0].pageX;
+            e.preventDefault();
         });
-    </script>
+
+        $(document).on('mousemove touchmove', function (e) {
+            if (!isDragging) return;
+
+            const moveX = e.pageX || e.originalEvent.touches[0].pageX;
+            let diff = moveX - startX;
+            diff = Math.max(0, Math.min(diff, maxDrag));
+            $btn.css('transform', `translateX(${diff}px)`);
+            e.preventDefault();
+        });
+
+        $(document).on('mouseup touchend', async function () {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const currentLeft = $btn.offset().left - $track.offset().left;
+            if (currentLeft >= maxDrag - 10) {
+                await requestLocationAndSubmit();
+                $btn.css('transform', `translateX(${maxDrag}px)`);
+
+                setTimeout(() => {
+                    window.location.href = '/manpower/dashboard-absence';
+                }, 1000);
+            } else {
+                resetSlider();
+            }
+        });
+
+        Livewire.on('absenceSubmitted', () => {
+            console.log('Absence submitted');
+            $('#gpsStatus').addClass('hidden');
+        });
+    });
+</script>
+
 
 </div>

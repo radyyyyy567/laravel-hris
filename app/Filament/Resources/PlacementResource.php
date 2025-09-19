@@ -148,16 +148,16 @@ class PlacementResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')->searchable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('checkin_time'),
                 Tables\Columns\TextColumn::make('checkout_time'),
-                Tables\Columns\TextColumn::make('long_lat')
+                Tables\Columns\TextColumn::make('long_lat')->searchable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('radius')
                     ->numeric()
                     ->sortable(),
-                    Tables\Columns\TextColumn::make('kode_placement'),
+                    Tables\Columns\TextColumn::make('kode_placement')->searchable(),
                     Tables\Columns\TextColumn::make('project.project.name')
                     ->label('Projects')
                     ->badge(),

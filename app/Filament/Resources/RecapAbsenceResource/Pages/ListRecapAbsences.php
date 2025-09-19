@@ -20,20 +20,20 @@ class ListRecapAbsences extends ListRecords
         return [
              ExportAction::make()
                 ->exports([
-                    ExcelExport::make()->withColumns([
-                        
-                        Column::make('manpower.user.name')->heading('Nama User'),
-                        Column::make('manpower.user.nip')->heading('NIP'),
-                        Column::make('absence_date')->heading('Tanggal Attendance'),
-                        Column::make('checkin_time')->heading('Jam Masuk'),
-                        Column::make('checkout_time')->heading('Jam Keluar'),
-                        Column::make('long_lat')->heading('Lokasi'),
-                        
-                        Column::make('status')->heading('Status'),
-
-
-                        Column::make('created_at')->heading('Creation date'),
-                    ]),
+                    ExcelExport::make()
+                    ->fromTable()
+                   ->withColumns([
+                            Column::make('manpower.user.name')->heading('Nama User'),
+                            Column::make('manpower.user.nip')->heading('NIP'),
+                            Column::make('absence_date')->heading('Tanggal Attendance'),
+                            Column::make('checkin_time')->heading('Jam Masuk'),
+                            Column::make('checkout_time')->heading('Jam Keluar'),
+                            Column::make('long_lat')->heading('Lokasi'),
+                            Column::make('status')->heading('Status'),
+                            Column::make('manpower.user.projects.name')->heading('Proyek'),
+                            Column::make('description')->heading('Keterangan'),
+                            Column::make('created_at')->heading('Creation date'),
+                        ])
                 ]),
             Actions\CreateAction::make(),
         ];

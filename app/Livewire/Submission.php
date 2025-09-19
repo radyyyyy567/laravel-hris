@@ -92,7 +92,7 @@ class Submission extends Component
             'modal_date' => 'required|date',
             'modal_start_time' => 'required',
             'modal_end_time' => 'required',
-            'modal_evidence' => 'required',
+            'modal_evidence' => 'required|mimes:jpg,jpeg,webp,png,mp4,heic,m4a,wav|max:12288', 
             'modal_description' => 'required',
         ]);
 
@@ -208,7 +208,7 @@ class Submission extends Component
                 'start_time' => $start,
                 'end_time' => $end,
                 'description' => json_encode([
-                            'submissiont_type' => $this->submission_type,
+                            'submission_type' => $this->submission_type,
                             'cuti_type' => $this->cuti_type,
                             'evidence' => $evidencePath
                         ]),
